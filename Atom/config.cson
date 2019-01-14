@@ -1,0 +1,21 @@
+"*":
+  core:
+    telemetryConsent: "no"
+    themes: [
+      "one-light-ui"
+      "one-light-syntax"
+    ]
+  editor:
+    tabType: "soft"
+  "exception-reporting":
+    userId: "38def6b7-7275-47a0-a4ab-f5269c6a7492"
+  "linter-eslint": {}
+  "linter-ui-default":
+    panelHeight: 152
+    showPanel: true
+  "spell-check":
+    locales: [
+      "en-CA"
+    ]
+  welcome:
+    showOnStartup: false
