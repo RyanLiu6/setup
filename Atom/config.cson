@@ -2,10 +2,11 @@
   core:
     telemetryConsent: "no"
     themes: [
-      "one-light-ui"
-      "one-light-syntax"
+      "bliss-ui"
+      "bliss-syntax"
     ]
   editor:
+    tabLength: 4
     tabType: "soft"
   "exception-reporting":
     userId: "38def6b7-7275-47a0-a4ab-f5269c6a7492"
