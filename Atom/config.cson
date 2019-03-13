@@ -20,3 +20,9 @@
     ]
   welcome:
     showOnStartup: false
+".js.source":
+  editor:
+    tabLength: 2
+".json.source":
+  editor:
+    tabLength: 2

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Installing the theme I prefer
 apm install bliss-ui
 apm install bliss-syntax
