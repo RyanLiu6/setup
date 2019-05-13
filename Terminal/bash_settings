@@ -7,3 +7,4 @@ export LSCOLORS=dxFxBxExCxegedabagacad
 alias ls='ls -GFh'
 alias pipuninstall="pip uninstall -y -r <(pip freeze)"
 alias reload='. ~/.bash_profile && echo "bash_profile reloaded correctly" || echo "Syntax Error in bash_profile"'
+alias atom='code'
