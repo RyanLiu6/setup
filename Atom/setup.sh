@@ -11,5 +11,5 @@ cp styles.less ~/.atom/styles.less
 if [[ "OSTYPE" == "darwin"* ]]; then
 	cp keymap.cson.mac ~/.atom/keymap.cson
 else
-	cp keymap.cson.other ~/.atom/keymap.cson
+	cp keymap.cson.windows ~/.atom/keymap.cson
 fi
