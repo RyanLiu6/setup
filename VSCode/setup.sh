@@ -9,3 +9,9 @@ if 	[[ "OSTYPE" == "darwin"* ]]; then
 #	cp settings.json %APPDATA%/Code/User/settings.json
 #	cp keybindings.json.windows %APPDATA%/Code/User/keybindings.json
 fi
+
+# Theme
+code --install-extension monokai.theme-monokai-pro-vscode
+
+# Languages
+code --install-extension ms-python.python
