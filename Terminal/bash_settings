@@ -4,7 +4,6 @@ export LSCOLORS=dxFxBxExCxegedabagacad
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
-alias ls='ls -GFh'
-alias pipuninstall="pip uninstall -y -r <(pip freeze)"
-alias reload='. ~/.bash_profile && echo "bash_profile reloaded correctly" || echo "Syntax Error in bash_profile"'
 alias atom='code'
+alias ls='ls -GFh'
+alias reload='. ~/.bash_profile && echo "bash_profile reloaded correctly" || echo "Syntax Error in bash_profile"'
