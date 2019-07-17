@@ -4,6 +4,8 @@ export LSCOLORS=dxFxBxExCxegedabagacad
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
+eval "$(pyenv init -)"
+
 alias atom='code'
 alias ls='ls -GFh'
 alias reload='. ~/.bash_profile && echo "bash_profile reloaded correctly" || echo "Syntax Error in bash_profile"'
