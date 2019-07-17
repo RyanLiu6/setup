@@ -1,0 +1,4 @@
+#!/bin/sh
+./VSCode/setup
+./Terminal/setup
+./Updates/setup
