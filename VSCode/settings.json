@@ -11,5 +11,19 @@
         "editor.tabSize": 2
     },
     "telemetry.enableTelemetry": false,
-    "telemetry.enableCrashReporter": false
-}   
+    "telemetry.enableCrashReporter": false,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "workbench.colorTheme": "Monokai Pro (Filter Octagon)",
+    "workbench.iconTheme": "Monokai Pro (Filter Octagon) Icons",
+    "editor.minimap.enabled": false,
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "python.jediEnabled": false,
+    "files.associations": {
+        "Dockerfile_*":"dockerfile",
+        "requirements_*":"pip-requirements",
+        "*_requirements.txt":"pip-requirements"
+  },
+}
