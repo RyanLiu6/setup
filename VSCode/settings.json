@@ -21,6 +21,8 @@
     "files.trimTrailingWhitespace": true,
     "python.jediEnabled": false,
     "files.associations": {
-        "Dockerfile_*":"dockerfile"
+        "Dockerfile_*":"dockerfile",
+        "requirements_*":"pip-requirements",
+        "*_requirements.txt":"pip-requirements"
   },
 }
