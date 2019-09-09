@@ -19,6 +19,7 @@
     "editor.suggestSelection": "first",
     "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
     "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
     "python.jediEnabled": false,
     "files.associations": {
         "Dockerfile_*":"dockerfile",
