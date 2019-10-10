@@ -3,7 +3,7 @@
 This is is a repo for personal dev setup.
 
 ## Editor
-Currently, my editor of choice is Visual Studio Code with the Monokai Pro (Filtered Octagon) theme. All settings are located in the [VSCode](https://github.com/RyanLiu6/setup/tree/master/VSCode) folder. Previously, it was Atom but performance was lacking compared to Code.
+Currently, my editor of choice is Visual Studio Code with the Monokai Pro (Filtered Octagon) theme. Previously, it was Atom but performance was lacking compared to Code.
 
 ## Terminal
 Due to the recent Mac OS Catalina Update, I've made the switch from bash to zsh. I've built my terminal to take full advantange of [spaceship-prompt](https://github.com/denysdovhan/spaceship-prompt) and several personal customizations.
