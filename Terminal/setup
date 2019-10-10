@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# # Auto-install things for Mac
-# if [[ "OSTYPE" == "darwin"* ]]; then
-# 	sudo brew install pyenv
-# 	sudo brew install zsh-completions
-# fi
+# Auto-install things for Mac
+if [[ "OSTYPE" == "darwin"* ]]; then
+	sudo brew install pyenv
+	sudo brew install zsh-completions
+fi
 
 # Automatically moving the correct file for you, assuming default installation
 	cp .zshrc ~/.zshrc

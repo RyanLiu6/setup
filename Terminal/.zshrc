@@ -11,7 +11,6 @@ SPACESHIP_PROMPT_ORDER=(
   host          # Hostname section
   dir           # Current directory section
   git           # Git section (git_branch + git_status)
-  package       # Package version
   node          # Node.js section
   docker        # Docker section
   pyenv         # Pyenv section
