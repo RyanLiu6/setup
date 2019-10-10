@@ -25,5 +25,5 @@
         "Dockerfile_*":"dockerfile",
         "requirements_*":"pip-requirements",
         "*_requirements.txt":"pip-requirements"
-  },
+  }
 }
