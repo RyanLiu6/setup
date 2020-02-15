@@ -1,5 +1,4 @@
 # setup
-
 This is is a repo for personal dev setup.
 
 ## Editor
