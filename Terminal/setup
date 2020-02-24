@@ -1,11 +1,13 @@
 #!/bin/sh
 
 # Auto-install things for Mac
-if [[ "OSTYPE" == "darwin"* ]]; then
-	sudo brew install pyenv
-	sudo brew install zsh-completions
+if [[ `uname` == "Darwin" ]]; then
+	brew install pyenv
+	brew install zsh-completions
 fi
 
+npm install -g spaceship-prompt
+
 # Automatically moving the correct file for you, assuming default installation
-	cp .zshrc ~/.zshrc
-	source ~/.zshrc
+cp .zshrc ~/.zshrc
+source ~/.zshrc

@@ -1,4 +1,13 @@
 #!/bin/sh
+
+# Instal Brew
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+# Install required stuff
+brew cask install visual-studio-code
+brew install npm
+
+# Then do setup things
 ./VSCode/setup
 ./Terminal/setup
 ./Updates/setup
