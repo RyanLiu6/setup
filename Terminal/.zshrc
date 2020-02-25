@@ -19,6 +19,7 @@ SPACESHIP_PROMPT_ORDER=(
 # General stuff
 export SPACESHIP_USER_SHOW="always"
 export SPACESHIP_HOST_SHOW="always"
+export SPACESHIP_DIR_TRUNC=0
 
 # Colors
 export LSCOLORS="Gx"
