@@ -6,4 +6,4 @@ alias systemctl="sudo systemctl"
 
 # Custom aliases
 alias reload="source ~/.zshrc && echo 'Profiles reloaded correctly' || echo 'Syntax Errors'"
-alias cds="cd ~/dev/setup/"
+alias cdm="cd ~/dev/setup/"
