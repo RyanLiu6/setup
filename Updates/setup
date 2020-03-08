@@ -1,4 +1,5 @@
 #!/bin/bash
-cp xyz.ryanliu6.update.plist ~/Library/LaunchAgents/
+cp ~/dev/setup/Updates/xyz.ryanliu6.update.plist ~/Library/LaunchAgents/
+mkdir ~/Library/LaunchAgents
 cd ~/Library/LaunchAgents/
 launchctl load xyz.ryanliu6.update.plist
