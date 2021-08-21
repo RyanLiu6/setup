@@ -7,3 +7,8 @@ alias systemctl="sudo systemctl"
 # Custom aliases
 alias reload="source ~/.zshrc && echo 'Profiles reloaded correctly' || echo 'Syntax Errors'"
 alias cdm="cd ~/dev/setup/"
+
+# functions
+function pip_install {
+    pip install $1 && pip freeze | grep $1 >> requirements.txt
+}
