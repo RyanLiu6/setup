@@ -25,5 +25,14 @@
         "Dockerfile_*":"dockerfile",
         "requirements_*":"pip-requirements",
         "*_requirements.txt":"pip-requirements"
-  }
+    },
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook"
+    },
+    "python.languageServer": "Default",
+    "explorer.confirmDelete": false,
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    }
 }
