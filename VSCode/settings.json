@@ -2,13 +2,13 @@
     "workbench.startupEditor": "newUntitledFile",
     "files.autoSave": "onFocusChange",
     "[javascript]": {
-        "editor.tabSize": 2
+        "editor.tabSize": 4
     },
     "[json]": {
-        "editor.tabSize": 2
+        "editor.tabSize": 4
     },
     "[typescript]": {
-        "editor.tabSize": 2
+        "editor.tabSize": 4
     },
     "telemetry.enableTelemetry": false,
     "telemetry.enableCrashReporter": false,
@@ -34,5 +34,28 @@
     "notebook.cellToolbarLocation": {
         "default": "right",
         "jupyter-notebook": "left"
-    }
+    },
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "string.quoted.docstring.multi.python",
+                "settings": {
+                    "foreground": "#EEBA30"
+                }
+            },
+            {
+                "scope": "string.quoted.docstring.multi.python punctuation.definition.string.end.python",
+                "settings": {
+                    "foreground": "#EEBA30"
+                }
+            },
+            {
+                "scope": "string.quoted.docstring.multi.python punctuation.definition.string.begin.python",
+                "settings": {
+                    "foreground": "#EEBA30"
+                }
+            }
+        ]
+    },
+    "autoDocstring.startOnNewLine": true
 }
