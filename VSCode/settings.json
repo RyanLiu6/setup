@@ -2,13 +2,13 @@
     "workbench.startupEditor": "newUntitledFile",
     "files.autoSave": "onFocusChange",
     "[javascript]": {
-        "editor.tabSize": 2
+        "editor.tabSize": 4
     },
     "[json]": {
-        "editor.tabSize": 2
+        "editor.tabSize": 4
     },
     "[typescript]": {
-        "editor.tabSize": 2
+        "editor.tabSize": 4
     },
     "telemetry.enableTelemetry": false,
     "telemetry.enableCrashReporter": false,
