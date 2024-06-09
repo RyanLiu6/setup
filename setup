@@ -8,6 +8,5 @@ brew cask install visual-studio-code
 brew install npm
 
 # Then do setup things
-./VSCode/setup
 ./Terminal/setup
 ./Updates/setup
