@@ -1,0 +1,23 @@
+[username]
+style_user = "bold purple"
+format = "[$user]($style) "
+show_always = true
+
+[hostname]
+style = "bold yellow"
+ssh_only = false
+
+[character]
+success_symbol = "[➜ ](bold green)"
+error_symbol = "[✗ ](bold red)"
+
+[container]
+format = '[$symbol \[$name\]]($style) '
+
+[directory]
+style = "bold cyan"
+truncation_length = 0
+
+[python]
+pyenv_version_name = true
+python_binary = "python3"
