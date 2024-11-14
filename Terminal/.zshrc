@@ -2,9 +2,10 @@
 for config in ~/dev/setup/Terminal/.zsh/*.zsh; do source $config; done
 for config in ~/dev/setup/ignore/*.zsh; do source $config; done
 
-# Set Spaceship ZSH as a prompt
-autoload -U promptinit; promptinit
-prompt spaceship
+# Starship is our chosen prompt
+eval "$(starship init zsh)"
+
+export STARSHIP_CONFIG=~/dev/setup/Terminal/starship.toml
 
 # Spaceship options
 SPACESHIP_PROMPT_ORDER=(
@@ -14,7 +15,7 @@ SPACESHIP_PROMPT_ORDER=(
   git           # Git section (git_branch + git_status)
   node          # Node.js section
   docker        # Docker section
-  pyenv         # Pyenv section
+  python         # Python section
 )
 
 # General stuff
