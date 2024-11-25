@@ -3,13 +3,13 @@ function lazy_load() {
     local load_func=$1
     local cmd=$2
     local precmd=$3
-    
+
     # If precmd is provided, run it immediately
     if [[ -n "$precmd" ]]; then
         eval "$precmd"
     fi
-    
-    eval "${cmd}() { 
+
+    eval "${cmd}() {
         unset -f ${cmd}
         eval \"\$($load_func)\"
         $cmd \"\$@\"
@@ -103,12 +103,12 @@ zsh_profile() {
 
     # Source zshrc and collect timings
     source ~/.zshrc
-    
+
     # Print results
     echo "\nShell startup timing:"
     printf '%s\n' "${timings[@]}"
     echo "Total time: $((EPOCHREALTIME*1000-start_time))ms\n"
-    
+
     # Clean up
     unset -f _log_time
 }
