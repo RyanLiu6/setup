@@ -37,8 +37,6 @@ if [[ $(functions _log_time) ]]; then _log_time "After starship"; fi
 
 export STARSHIP_CONFIG=~/dev/setup/Terminal/starship.toml
 
-# fnm is lazy loaded now, no need to evaluate here
-
 # Print timing statistics
 echo "\nShell startup timing:"
 printf '%s\n' "${zsh_stats[@]}"
