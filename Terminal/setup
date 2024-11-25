@@ -7,13 +7,9 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # Then cp zshrc
 cp ~/dev/setup/Terminal/.zshrc ~/.zshrc
 
-# Install nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-
 # Auto-install things for Mac
 if [[ `uname` == "Darwin" ]]; then
-	brew install pyenv starship zsh-completions
-	nvm install --lts
+	brew install fnm pyenv starship zsh-completions
 fi
 
 # Source and reload zsh
