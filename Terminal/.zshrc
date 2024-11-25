@@ -6,3 +6,6 @@ for config in ~/dev/setup/ignore/*.zsh; do source $config; done
 eval "$(starship init zsh)"
 
 export STARSHIP_CONFIG=~/dev/setup/Terminal/starship.toml
+
+# fnm evaluation for Node
+eval "$(fnm env --use-on-cd --shell zsh)"
