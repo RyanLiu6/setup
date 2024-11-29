@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Copy shell config files
+cp ~/dev/setup/shell/.zprofile ~/.zprofile
+cp ~/dev/setup/shell/.zshrc ~/.zshrc

@@ -1,16 +1,10 @@
 #!/bin/sh
 
-# First cp zprofile (required by brew)
-cp ~/dev/setup/Terminal/.zprofile ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Then cp zshrc
-cp ~/dev/setup/Terminal/.zshrc ~/.zshrc
-
 # Auto-install things for Mac
 if [[ `uname` == "Darwin" ]]; then
-	brew install fnm pyenv starship zsh-completions
-fi
+    # Install uv
+    curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Source and reload zsh
-source ~/.zshrc
+	# Install rest
+    brew install direnv fnm starship zsh-completions
+fi

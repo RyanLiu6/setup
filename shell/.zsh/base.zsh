@@ -16,12 +16,11 @@ function lazy_load() {
     }"
 }
 
-# Lazy load pyenv, but initialize basic environment
-lazy_load "pyenv init -" pyenv 'export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"'
+# Initialize direnv
+eval "$(direnv hook zsh)"
 
 # Lazy load fnm, but set up auto-use
-lazy_load "fnm env --use-on-cd" fnm 'export PATH="/Users/ryanliu6/Library/Application Support/fnm:$PATH"'
+lazy_load "fnm env --use-on-cd" fnm 'export PATH="$HOME/Library/Application Support/fnm:$PATH"'
 
 # iTerm 2 tab name for directories
 if [ $ITERM_SESSION_ID ]; then
@@ -111,4 +110,19 @@ zsh_profile() {
 
     # Clean up
     unset -f _log_time
+}
+
+# Python project initialization helper
+pyinit() {
+    # Create project structure
+    mkdir -p src tests
+
+    # Create .envrc
+    echo "layout uv" > .envrc
+    direnv allow
+
+    # Install common dev dependencies
+    uv pip install pytest ruff
+
+    echo "Python project initialized with direnv!"
 }
