@@ -30,7 +30,7 @@ if [[ ! -v evaluated_cmds[starship] ]]; then
 fi
 if [[ $(functions _log_time) ]]; then _log_time "After starship"; fi
 
-export STARSHIP_CONFIG=~/dev/setup/Terminal/starship.toml
+export STARSHIP_CONFIG=~/dev/setup/terminal/starship.toml
 
 # Print timing statistics
 echo "\nShell startup time:"

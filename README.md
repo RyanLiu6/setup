@@ -22,16 +22,15 @@ This repository contains configuration for:
 2. Run the setup scripts:
    ```bash
    cd ~/dev/setup
-   ./terminal/setup  # Install core dependencies
-   ./direnv/setup    # Configure direnv
-   ./git/setup       # Configure git
-   ./shell/setup     # Configure shell
+   ./setup
    ```
 
 3. Restart your terminal
    ```bash
    source ~/.zshrc
    ```
+
+   Later on, you can run `reload` to restart your terminal.
 
 ## Components
 ### Terminal Setup
