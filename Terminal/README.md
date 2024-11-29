@@ -1,10 +1,21 @@
-# Terminal
-To note, `Custom.terminal` is a custom terminal profile for the included `Terminal.app` application, while `purple.itermcolors` is a custom color scheme for iTerm2, my preferred terminal application. Feel free to use whichever!
+ # Terminal Setup
 
-After setup is ran, you'll have to do the following if you wish to install Python using pyenv:
+This directory contains terminal configuration and tools setup.
 
-```bash
-xcode-select --install
+- `colors/`: Terminal color schemes
+  - `*.itermcolors`: Color schemes for iTerm2
+- `Custom.terminal`: Profile for Terminal.app
 
-brew install openssl readline sqlite3 xz zlib tcl-tk
-```
+Specifically, the following dependencies are installed:
+  - uv: Fast Python package installer
+  - fnm: Fast Node version manager
+  - starship: Shell prompt customization
+  - zsh-completions: Additional ZSH completions
+
+## Setup
+Running `./setup` will:
+1. Install the dependencies
+
+Next, install the chosen profile:
+* Terminal.app (Default) - Terminal -> Settings -> Profiles -> Import -> `Custom.terminal`
+* iTerm2 - Preferences -> Profiles -> Colors -> Color Presets -> Import -> `eva01.itermcolors`

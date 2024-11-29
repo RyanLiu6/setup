@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Setup global gitignore
+cp ~/dev/setup/git/.gitignore_global ~/.gitignore_global
+git config --global core.excludesfile ~/.gitignore_global

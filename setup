@@ -2,7 +2,13 @@
 
 # Instal Brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Then do setup things
-./Terminal/setup
-./Updates/setup
+# Run setup scripts for each component
+./terminal/setup
+./direnv/setup
+./git/setup
+./shell/setup
+
+# Source and reload zsh
+source ~/.zshrc

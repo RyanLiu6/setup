@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Create config directory if it doesn't exist
+mkdir -p ~/.config/direnv
+
+# Copy direnv config
+cp ~/dev/setup/direnv/direnvrc ~/.config/direnv/direnvrc
+
+# Install direnv if on Mac
+if [[ `uname` == "Darwin" ]]; then
+    brew install direnv
+fi

@@ -19,5 +19,6 @@ style = "bold cyan"
 truncation_length = 0
 
 [python]
-pyenv_version_name = true
 python_binary = "python3"
+detect_extensions = ["py"]
+detect_files = ["requirements.txt", "pyproject.toml"]
