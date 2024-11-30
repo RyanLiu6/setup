@@ -1,12 +1,19 @@
 #!/bin/sh
 
+echo "Setting up direnv configuration..."
+
+echo "Creating config directory if it doesn't exist..."
 # Create config directory if it doesn't exist
 mkdir -p ~/.config/direnv
 
+echo "Copying direnv configuration file..."
 # Copy direnv config
 cp ~/dev/setup/direnv/direnvrc ~/.config/direnv/direnvrc
 
 # Install direnv if on Mac
 if [[ `uname` == "Darwin" ]]; then
+    echo "macOS detected - installing direnv via Homebrew..."
     brew install direnv
 fi
+
+echo "direnv setup complete! Don't forget to add 'eval \"$(direnv hook zsh)\"' to your shell's rc file if you haven't already."

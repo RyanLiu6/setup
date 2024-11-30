@@ -1,5 +1,17 @@
 #!/bin/sh
 
+echo "Setting up shell configuration..."
+
 # Copy shell config files
+echo "Copying .zprofile..."
 cp ~/dev/setup/shell/.zprofile ~/.zprofile
+echo "Copying .zshrc..."
 cp ~/dev/setup/shell/.zshrc ~/.zshrc
+
+# Change default shell to zsh if not already
+if [[ "$SHELL" != "/bin/zsh" ]]; then
+    echo "Changing default shell to zsh..."
+    chsh -s /bin/zsh
+fi
+
+echo "Shell setup complete! Please restart your terminal for changes to take effect."
