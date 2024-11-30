@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "Setting up global gitignore file..."
 # Setup global gitignore
 cp ~/dev/setup/git/.gitignore_global ~/.gitignore_global
+echo "Configuring git to use global gitignore..."
 git config --global core.excludesfile ~/.gitignore_global
+echo "Git global gitignore setup complete!"

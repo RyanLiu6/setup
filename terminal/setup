@@ -1,10 +1,22 @@
 #!/bin/sh
 
+echo "Starting terminal environment setup..."
+
 # Auto-install things for Mac
 if [[ `uname` == "Darwin" ]]; then
+    echo "macOS detected - installing required packages..."
+
+    echo "Installing uv package manager..."
     # Install uv
     curl -LsSf https://astral.sh/uv/install.sh | sh
 
+    echo "Installing fnm starship and zsh-completions..."
 	# Install rest
-    brew install direnv fnm starship zsh-completions
+    brew install fnm starship zsh-completions
+
+    echo "Terminal tools installation complete!"
+else
+    echo "Not on macOS - skipping package installation"
 fi
+
+echo "Terminal setup finished! You may need to restart your terminal for all changes to take effect."
