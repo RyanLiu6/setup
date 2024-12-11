@@ -126,3 +126,6 @@ pyinit() {
 
     echo "Python project initialized with direnv!"
 }
+
+# Data directory
+export DATA_DIRECTORY=/Volumes/Data
