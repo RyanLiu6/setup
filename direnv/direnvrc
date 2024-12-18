@@ -1,8 +1,18 @@
 layout_uv() {
-    if [[ ! -d .venv ]]; then
-        uv venv
+    if ! has uv; then
+        log_error "uv not found. Please install uv first."
+        return 1
     fi
-    source .venv/bin/activate
+
+    local venv=.venv
+    if [[ ! -d $venv ]]; then
+        log_status "creating python venv"
+        uv venv
+        log_status "installing dependencies"
+        uv pip install -e ".[dev]"
+    fi
+
+    source $venv/bin/activate
 }
 
 layout_venv() {
