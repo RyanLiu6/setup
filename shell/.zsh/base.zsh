@@ -129,3 +129,6 @@ pyinit() {
 
 # Data directory
 export DATA_DIRECTORY=/Volumes/Data
+
+# Ollama models
+export OLLAMA_MODELS=/Volumes/Data/.ollama/models
