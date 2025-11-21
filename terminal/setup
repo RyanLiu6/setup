@@ -1,22 +1,56 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-echo "Starting terminal environment setup..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Terminal Environment Setup"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 
-# Auto-install things for Mac
-if [[ `uname` == "Darwin" ]]; then
-    echo "macOS detected - installing required packages..."
-
-    echo "Installing uv package manager..."
-    # Install uv
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-
-    echo "Installing fnm starship and zsh-completions..."
-	# Install rest
-    brew install fnm starship zsh-completions
-
-    echo "Terminal tools installation complete!"
-else
-    echo "Not on macOS - skipping package installation"
+# Check for macOS
+if [[ $(uname) != "Darwin" ]]; then
+    echo "⚠️  Not on macOS - this setup is designed for macOS only"
+    exit 1
 fi
 
-echo "Terminal setup finished! You may need to restart your terminal for all changes to take effect."
+echo "📦 Installing terminal tools..."
+echo ""
+
+# Install uv via official installer
+if ! command -v uv &> /dev/null; then
+    echo "  → Installing uv package manager..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    echo "  ✓ uv installed successfully"
+else
+    echo "  ✓ uv already installed"
+fi
+
+# Install fnm
+if ! command -v fnm &> /dev/null; then
+    echo "  → Installing fnm (Node.js version manager)..."
+    brew install fnm
+    echo "  ✓ fnm installed successfully"
+else
+    echo "  ✓ fnm already installed"
+fi
+
+# Install starship
+if ! command -v starship &> /dev/null; then
+    echo "  → Installing starship (terminal prompt)..."
+    brew install starship
+    echo "  ✓ starship installed successfully"
+else
+    echo "  ✓ starship already installed"
+fi
+
+# Install zsh-completions
+if ! brew list zsh-completions &> /dev/null; then
+    echo "  → Installing zsh-completions..."
+    brew install zsh-completions
+    echo "  ✓ zsh-completions installed successfully"
+else
+    echo "  ✓ zsh-completions already installed"
+fi
+
+echo ""
+echo "✓ Terminal environment setup complete!"
+echo ""

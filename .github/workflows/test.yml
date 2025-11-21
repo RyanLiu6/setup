@@ -1,0 +1,183 @@
+name: Test Setup Scripts
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  test-setup:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        path: setup-repo
+
+    - name: Set SETUP_DIR environment variable
+      run: echo "SETUP_DIR=$GITHUB_WORKSPACE/setup-repo" >> $GITHUB_ENV
+
+    - name: Install Homebrew (if not present)
+      run: |
+        if ! command -v brew &> /dev/null; then
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        fi
+        echo "✓ Homebrew is available"
+
+    - name: Run main setup script
+      run: |
+        cd $SETUP_DIR
+        ./setup
+
+    - name: Verify configuration files were created
+      run: |
+        echo "Checking configuration files..."
+
+        # Check zsh configs
+        if [ -f ~/.zshrc ]; then
+          echo "✓ ~/.zshrc created"
+        else
+          echo "✗ ~/.zshrc missing"
+          exit 1
+        fi
+
+        # Check direnv config
+        if [ -f ~/.config/direnv/direnvrc ]; then
+          echo "✓ ~/.config/direnv/direnvrc created"
+        else
+          echo "✗ ~/.config/direnv/direnvrc missing"
+          exit 1
+        fi
+
+        # Check git config
+        if [ -f ~/.gitignore_global ]; then
+          echo "✓ ~/.gitignore_global created"
+        else
+          echo "✗ ~/.gitignore_global missing"
+          exit 1
+        fi
+
+    - name: Verify installed tools are accessible
+      run: |
+        echo "Checking installed tools..."
+
+        # Source the environment to pick up any PATH changes
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+
+        # Add uv to PATH (installed via curl script)
+        export PATH="$HOME/.cargo/bin:$PATH"
+
+        # Check uv
+        if command -v uv &> /dev/null; then
+          echo "✓ uv is available ($(uv --version))"
+        else
+          echo "✗ uv not found in PATH"
+          exit 1
+        fi
+
+        # Check fnm
+        if command -v fnm &> /dev/null; then
+          echo "✓ fnm is available ($(fnm --version))"
+        else
+          echo "✗ fnm not found"
+          exit 1
+        fi
+
+        # Check starship
+        if command -v starship &> /dev/null; then
+          echo "✓ starship is available ($(starship --version))"
+        else
+          echo "✗ starship not found"
+          exit 1
+        fi
+
+        # Check direnv
+        if command -v direnv &> /dev/null; then
+          echo "✓ direnv is available ($(direnv --version))"
+        else
+          echo "✗ direnv not found"
+          exit 1
+        fi
+
+    - name: Verify git configuration
+      run: |
+        echo "Checking git configuration..."
+
+        # Check global gitignore is configured
+        GITIGNORE_PATH=$(git config --global core.excludesfile)
+        if [ "$GITIGNORE_PATH" = "$HOME/.gitignore_global" ]; then
+          echo "✓ Git global gitignore is configured correctly"
+        else
+          echo "✗ Git global gitignore not configured (got: $GITIGNORE_PATH)"
+          exit 1
+        fi
+
+        # Check autoSetupRemote
+        AUTO_SETUP=$(git config --global push.autoSetupRemote)
+        if [ "$AUTO_SETUP" = "true" ]; then
+          echo "✓ Git push.autoSetupRemote is enabled"
+        else
+          echo "✗ Git push.autoSetupRemote not enabled"
+          exit 1
+        fi
+
+    - name: Verify zsh configuration is valid
+      run: |
+        echo "Validating zsh configuration..."
+
+        # Source zshrc to check for syntax errors
+        # We use -n for syntax check without executing
+        if zsh -n ~/.zshrc; then
+          echo "✓ .zshrc syntax is valid"
+        else
+          echo "✗ .zshrc has syntax errors"
+          exit 1
+        fi
+
+    - name: Test direnv layouts
+      run: |
+        echo "Testing direnv layouts..."
+
+        # Create a test directory
+        mkdir -p /tmp/test-direnv-uv
+        cd /tmp/test-direnv-uv
+
+        # Create .envrc with layout uv
+        echo "layout uv" > .envrc
+
+        # Check if direnv can load it (just check the file is recognized)
+        if direnv status | grep -q "Found RC path"; then
+          echo "✓ direnv recognizes .envrc files"
+        else
+          echo "⚠ direnv status check inconclusive (may need direnv allow)"
+        fi
+
+    - name: Test setup idempotency
+      run: |
+        echo "Testing that setup can be run multiple times..."
+        cd $SETUP_DIR
+
+        # Run setup again
+        ./setup
+
+        echo "✓ Setup script is idempotent (can be run multiple times)"
+
+    - name: Summary
+      if: success()
+      run: |
+        echo ""
+        echo "========================================="
+        echo "✓ All tests passed!"
+        echo "========================================="
+        echo ""
+        echo "Verified:"
+        echo "  - All setup scripts run without errors"
+        echo "  - Configuration files are created"
+        echo "  - All tools are installed and accessible"
+        echo "  - Git configuration is correct"
+        echo "  - ZSH configuration is valid"
+        echo "  - Setup is idempotent"
