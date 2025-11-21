@@ -1,10 +1,32 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-echo "Setting up global gitignore file..."
+SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Git Configuration Setup"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Check if git is installed
+if ! command -v git &> /dev/null; then
+    echo "⚠️  Git is not installed. Please install git first."
+    exit 1
+fi
+
+echo "📝 Configuring git..."
+echo ""
+
 # Setup global gitignore
-cp ~/dev/setup/git/.gitignore_global ~/.gitignore_global
-echo "Configuring git to use global gitignore..."
+cp "$SETUP_DIR/git/.gitignore_global" ~/.gitignore_global
+echo "  → Copied global gitignore to ~/.gitignore_global"
+
 git config --global core.excludesfile ~/.gitignore_global
-echo "Git global gitignore setup complete!"
+echo "  ✓ Configured git to use global gitignore"
+
 git config --global push.autoSetupRemote true
-echo "Git push auto setup remote complete!"
+echo "  ✓ Configured git push to auto-setup remote tracking"
+
+echo ""
+echo "✓ Git configuration complete!"
+echo ""

@@ -1,0 +1,15 @@
+# Python project using uv for dependency management
+# Copy this file to your project root as .envrc and run: direnv allow
+
+# Use uv layout to automatically create and activate a virtual environment
+layout uv
+
+# Optional: Set Python version (requires pyenv or similar)
+# use python 3.11
+
+# Optional: Export project-specific environment variables
+# export DEBUG=true
+# export DATABASE_URL=sqlite:///local.db
+
+# Optional: Add project bin directory to PATH
+# PATH_add bin

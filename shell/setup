@@ -1,17 +1,36 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-echo "Setting up shell configuration..."
+SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Shell Configuration Setup"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+echo "📝 Copying shell configuration files..."
+echo ""
 
 # Copy shell config files
-echo "Copying .zprofile..."
-cp ~/dev/setup/shell/.zprofile ~/.zprofile
-echo "Copying .zshrc..."
-cp ~/dev/setup/shell/.zshrc ~/.zshrc
+if [[ -f "$SETUP_DIR/shell/.zprofile" ]]; then
+    cp "$SETUP_DIR/shell/.zprofile" ~/.zprofile
+    echo "  ✓ Copied .zprofile to home directory"
+fi
+
+cp "$SETUP_DIR/shell/.zshrc" ~/.zshrc
+echo "  ✓ Copied .zshrc to home directory"
+
+echo ""
 
 # Change default shell to zsh if not already
 if [[ "$SHELL" != "/bin/zsh" ]]; then
-    echo "Changing default shell to zsh..."
+    echo "🐚 Changing default shell to zsh..."
     chsh -s /bin/zsh
+    echo "✓ Default shell changed to zsh"
+else
+    echo "✓ Default shell is already zsh"
 fi
 
-echo "Shell setup complete! Please restart your terminal for changes to take effect."
+echo ""
+echo "✓ Shell configuration complete!"
+echo ""
