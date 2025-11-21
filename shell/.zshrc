@@ -15,6 +15,11 @@ for config in ~/dev/setup/shell/.zsh/*.zsh; do
     source_once $config
 done
 
+# Source Instacart-specific configuration if it exists
+if [[ -f ~/.instacart_shell_profile ]]; then
+    source_once ~/.instacart_shell_profile
+fi
+
 # Starship is our chosen prompt
 if [[ ! -v evaluated_cmds[starship] ]]; then
     eval "$(starship init zsh)"

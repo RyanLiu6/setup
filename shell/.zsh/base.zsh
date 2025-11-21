@@ -86,17 +86,51 @@ export LESS_TERMCAP_us=$'\E[04;38;5;146m'
 
 # Shell profiling - use 'shellperf' to measure startup time
 shellperf() {
-    # Measure shell startup time
+    # Measure shell startup time with detailed breakdown
     zmodload zsh/datetime
     local start_time=$((EPOCHREALTIME*1000))
+    local last_time=$start_time
+    local timings=()
 
-    # Reload shell
-    source ~/.zshrc
+    # Helper function to log timing
+    function _log_time() {
+        local new_time=$((EPOCHREALTIME*1000))
+        local label=$1
+        local duration=$((new_time-last_time))
+        timings+=("  $label: ${duration}ms")
+        last_time=$new_time
+    }
+
+    # Temporarily export the timing function
+    export -f _log_time 2>/dev/null || true
+
+    # Source base configs
+    _log_time "Start"
+    for config in ~/dev/setup/shell/.zsh/*.zsh; do
+        source $config
+    done
+    _log_time "Terminal configs"
+
+    # Source Instacart profile
+    if [[ -f ~/.instacart_shell_profile ]]; then
+        source ~/.instacart_shell_profile
+        _log_time "Instacart profile"
+    fi
+
+    # Starship prompt
+    eval "$(starship init zsh)"
+    _log_time "Starship prompt"
 
     local end_time=$((EPOCHREALTIME*1000))
-    local duration=$((end_time - start_time))
+    local total_duration=$((end_time - start_time))
 
-    echo "\nShell startup time: ${duration}ms\n"
+    # Print results
+    echo "\nShell startup timing breakdown:"
+    printf '%s\n' "${timings[@]}"
+    echo "\nTotal time: ${total_duration}ms\n"
+
+    # Clean up
+    unset -f _log_time
 }
 
 # Data directory
