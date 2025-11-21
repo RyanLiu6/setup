@@ -1,0 +1,26 @@
+# Local shell customizations (not tracked in git)
+#
+# This file should be copied to ~/.zshrc.local for work-specific or machine-specific
+# configurations that you don't want to commit to your setup repository.
+#
+# The main .zshrc will automatically source this file if it exists.
+#
+# Use _shellperf_tag to mark timing sections when profiling shell startup.
+# Example tags: "work", "company-name", "machine-specific", etc.
+
+# Example: Source work-specific shell profile
+# _shellperf_tag "work" "Loading work profile"
+# if [[ -f ~/.instacart_shell_profile ]]; then
+#     source ~/.instacart_shell_profile
+# fi
+# _shellperf_tag "work" "Loaded work profile"
+
+# Example: Add work-specific environment variables
+# _shellperf_tag "work" "Setting environment variables"
+# export WORK_VAR="value"
+# _shellperf_tag "work" "Set environment variables"
+
+# Example: Source machine-specific configurations
+# _shellperf_tag "machine" "Loading machine-specific configs"
+# export MACHINE_SPECIFIC_PATH="/some/path"
+# _shellperf_tag "machine" "Loaded machine-specific configs"

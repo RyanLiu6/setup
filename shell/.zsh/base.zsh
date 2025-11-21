@@ -84,21 +84,6 @@ export LESS_TERMCAP_so=$'\E[38;33;246m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[04;38;5;146m'
 
-# Shell profiling - use 'shellperf' to measure startup time
-shellperf() {
-    # Measure shell startup time
-    zmodload zsh/datetime
-    local start_time=$((EPOCHREALTIME*1000))
-
-    # Reload shell
-    source ~/.zshrc
-
-    local end_time=$((EPOCHREALTIME*1000))
-    local duration=$((end_time - start_time))
-
-    echo "\nShell startup time: ${duration}ms\n"
-}
-
 # Data directory
 export DATA_DIRECTORY=/Volumes/Data
 
