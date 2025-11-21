@@ -1,14 +1,37 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-# Instal Brew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Determine the setup directory
+SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+
+echo "======================================"
+echo "Development Environment Setup"
+echo "======================================"
+echo ""
+
+# Install Brew
+if ! command -v brew &> /dev/null; then
+    echo "📦 Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    echo "✓ Homebrew installed successfully"
+else
+    echo "✓ Homebrew already installed"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+echo ""
 
 # Run setup scripts for each component
-./terminal/setup
-./direnv/setup
-./git/setup
-./shell/setup
+"$SETUP_DIR/terminal/setup"
+"$SETUP_DIR/direnv/setup"
+"$SETUP_DIR/git/setup"
+"$SETUP_DIR/shell/setup"
 
-# Source and reload zsh
-source ~/.zshrc
+echo ""
+echo "======================================"
+echo "✓ Setup complete!"
+echo "======================================"
+echo ""
+echo "Please restart your terminal or run: source ~/.zshrc"
+echo ""

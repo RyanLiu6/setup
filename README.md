@@ -19,18 +19,28 @@ This repository contains configuration for:
    git clone https://github.com/yourusername/setup.git ~/dev/setup
    ```
 
-2. Run the setup scripts:
+2. Run the setup script:
    ```bash
    cd ~/dev/setup
    ./setup
    ```
 
-3. Restart your terminal
+3. Restart your terminal:
    ```bash
    source ~/.zshrc
    ```
 
-   Later on, you can run `reload` to restart your terminal.
+**Note:** Later on, you can use `reload` to restart your terminal.
+
+## Custom Installation Path
+
+By default, the setup expects to be cloned to `~/dev/setup`. If you prefer a different location:
+
+```bash
+export SETUP_DIR=/path/to/your/setup
+cd $SETUP_DIR
+./setup
+```
 
 ## Components
 ### Terminal Setup
@@ -94,11 +104,31 @@ Each component can be customized by editing its configuration:
 - Python: `direnv/direnvrc`
 - Git: `git/.gitignore_global`
 
+## Useful Commands
+
+- `reload` - Restart your terminal session
+- `shellperf` - Measure shell startup performance
+- `dps` - Enhanced docker ps with formatted output
+
+## Testing
+
+This repository includes automated testing via GitHub Actions (free for public repositories). The test workflow:
+
+- Runs on every push and pull request
+- Tests on actual macOS runners
+- Verifies all setup scripts run without errors
+- Validates that all configuration files are created
+- Confirms all tools are installed and accessible
+- Checks git configuration is correct
+- Tests setup idempotency (can be run multiple times)
+
+View test results in the "Actions" tab of your GitHub repository.
+
 ## Troubleshooting
 
 ### Shell Performance
-Use the built-in profiling tool:
+Use the built-in profiling tool to measure startup time:
 
 ```bash
-zsh_profile
+shellperf
 ```
