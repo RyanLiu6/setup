@@ -84,47 +84,19 @@ export LESS_TERMCAP_so=$'\E[38;33;246m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[04;38;5;146m'
 
-# Shell profiling function
-zsh_profile() {
-    # Enable profiling
+# Shell profiling - use 'shellperf' to measure startup time
+shellperf() {
+    # Measure shell startup time
     zmodload zsh/datetime
     local start_time=$((EPOCHREALTIME*1000))
-    local last_time=$start_time
-    local timings=()
 
-    function _log_time() {
-        local new_time=$((EPOCHREALTIME*1000))
-        local label=$1
-        local duration=$((new_time-last_time))
-        timings+=("$label: ${duration}ms")
-        last_time=$new_time
-    }
-
-    # Source zshrc and collect timings
+    # Reload shell
     source ~/.zshrc
 
-    # Print results
-    echo "\nShell startup timing:"
-    printf '%s\n' "${timings[@]}"
-    echo "Total time: $((EPOCHREALTIME*1000-start_time))ms\n"
+    local end_time=$((EPOCHREALTIME*1000))
+    local duration=$((end_time - start_time))
 
-    # Clean up
-    unset -f _log_time
-}
-
-# Python project initialization helper
-pyinit() {
-    # Create project structure
-    mkdir -p src tests
-
-    # Create .envrc
-    echo "layout uv" > .envrc
-    direnv allow
-
-    # Install common dev dependencies
-    uv pip install pytest ruff
-
-    echo "Python project initialized with direnv!"
+    echo "\nShell startup time: ${duration}ms\n"
 }
 
 # Data directory

@@ -1,19 +1,38 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-echo "Setting up direnv configuration..."
+SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
 
-echo "Creating config directory if it doesn't exist..."
-# Create config directory if it doesn't exist
-mkdir -p ~/.config/direnv
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Direnv Setup"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 
-echo "Copying direnv configuration file..."
-# Copy direnv config
-cp ~/dev/setup/direnv/direnvrc ~/.config/direnv/direnvrc
-
-# Install direnv if on Mac
-if [[ `uname` == "Darwin" ]]; then
-    echo "macOS detected - installing direnv via Homebrew..."
-    brew install direnv
+# Check for macOS
+if [[ $(uname) != "Darwin" ]]; then
+    echo "⚠️  Not on macOS - this setup is designed for macOS only"
+    exit 1
 fi
 
-echo "direnv setup complete! Don't forget to add 'eval \"$(direnv hook zsh)\"' to your shell's rc file if you haven't already."
+# Install direnv
+if ! command -v direnv &> /dev/null; then
+    echo "📦 Installing direnv..."
+    brew install direnv
+    echo "✓ direnv installed successfully"
+else
+    echo "✓ direnv already installed"
+fi
+
+echo ""
+
+# Create config directory
+echo "📝 Configuring direnv..."
+mkdir -p ~/.config/direnv
+
+# Copy direnv config
+cp "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
+echo "✓ Configuration copied to ~/.config/direnv/direnvrc"
+
+echo ""
+echo "✓ direnv setup complete!"
+echo ""

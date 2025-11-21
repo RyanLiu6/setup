@@ -6,3 +6,8 @@
 
 # direnv
 .envrc
+
+# AI things
+_claude
+.claude
+.cursor
