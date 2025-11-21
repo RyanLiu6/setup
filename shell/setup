@@ -24,9 +24,18 @@ echo ""
 
 # Change default shell to zsh if not already
 if [[ "$SHELL" != "/bin/zsh" ]]; then
-    echo "🐚 Changing default shell to zsh..."
-    chsh -s /bin/zsh
-    echo "✓ Default shell changed to zsh"
+    # Skip chsh in CI environments where it requires interactive password input
+    if [[ -n "$CI" || -n "$GITHUB_ACTIONS" ]]; then
+        echo "ℹ️  Skipping shell change in CI environment"
+    else
+        echo "🐚 Changing default shell to zsh..."
+        if chsh -s /bin/zsh 2>/dev/null; then
+            echo "✓ Default shell changed to zsh"
+        else
+            echo "⚠️  Could not change default shell (may require password or sudo)"
+            echo "   You can manually change it later with: chsh -s /bin/zsh"
+        fi
+    fi
 else
     echo "✓ Default shell is already zsh"
 fi
