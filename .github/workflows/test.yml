@@ -89,8 +89,8 @@ jobs:
           export PATH="/usr/local/bin:$PATH"
         fi
 
-        # Add uv to PATH (installed via curl script)
-        export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+        # Add uv and pnpm to PATH (installed via curl scripts)
+        export PATH="$HOME/.local/share/pnpm:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
         # Check uv
         if command -v uv &> /dev/null; then
@@ -121,6 +121,14 @@ jobs:
           echo "✓ direnv is available ($(direnv --version))"
         else
           echo "✗ direnv not found"
+          exit 1
+        fi
+
+        # Check pnpm
+        if command -v pnpm &> /dev/null; then
+          echo "✓ pnpm is available ($(pnpm --version))"
+        else
+          echo "✗ pnpm not found"
           exit 1
         fi
 
@@ -204,7 +212,7 @@ jobs:
         echo "Verified:"
         echo "  - All setup scripts run without errors"
         echo "  - Configuration files are created"
-        echo "  - All tools are installed and accessible"
+        echo "  - All tools installed (uv, fnm, pnpm, starship, direnv)"
         echo "  - Git configuration is correct"
         echo "  - ZSH configuration is valid"
         echo "  - Setup is idempotent"

@@ -42,6 +42,15 @@ else
     echo "  ✓ fnm already installed"
 fi
 
+# Install pnpm via standalone installer
+if ! command -v pnpm &> /dev/null; then
+    echo "  → Installing pnpm..."
+    curl -fsSL https://get.pnpm.io/install.sh | sh -
+    echo "  ✓ pnpm installed successfully"
+else
+    echo "  ✓ pnpm already installed"
+fi
+
 # Install starship
 if ! command -v starship &> /dev/null; then
     echo "  → Installing starship (terminal prompt)..."
