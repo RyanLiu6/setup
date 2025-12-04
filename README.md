@@ -32,6 +32,22 @@ This repository contains cross-platform configuration for macOS and Linux:
 
 **Note:** Later on, you can use `reload` to restart your terminal.
 
+## Migrating from Older Versions
+
+If you have an existing setup from before the loader architecture was introduced, run:
+
+```bash
+cd ~/dev/setup
+git pull origin master
+./migrate
+```
+
+This will:
+1. Back up your existing `~/.zshrc`
+2. Run the full setup
+3. Clean up `~/.zshrc` to remove content now handled by tracked config
+4. Preserve tool-installed blocks (gohan, bento, instacart, etc.)
+
 ## Custom Installation Path
 
 By default, the setup expects to be cloned to `~/dev/setup`. If you prefer a different location:
