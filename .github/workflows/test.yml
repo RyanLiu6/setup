@@ -98,7 +98,12 @@ jobs:
         fi
 
         # Add uv and pnpm to PATH (installed via curl scripts)
-        export PATH="$HOME/.local/share/pnpm:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+        # pnpm: ~/.local/share/pnpm on Linux, ~/Library/pnpm on macOS
+        export PNPM_HOME="$HOME/.local/share/pnpm"
+        if [ "$RUNNER_OS" = "macOS" ]; then
+          export PNPM_HOME="$HOME/Library/pnpm"
+        fi
+        export PATH="$PNPM_HOME:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
         # Check uv
         if command -v uv &> /dev/null; then
