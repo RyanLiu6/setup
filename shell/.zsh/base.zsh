@@ -20,7 +20,11 @@ function lazy_load() {
 eval "$(direnv hook zsh)"
 
 # Lazy load fnm, but set up auto-use
-lazy_load "fnm env --use-on-cd" fnm 'export PATH="$HOME/Library/Application Support/fnm:$PATH"'
+if [[ "$OSTYPE" == darwin* ]]; then
+    lazy_load "fnm env --use-on-cd" fnm 'export PATH="$HOME/Library/Application Support/fnm:$PATH"'
+else
+    lazy_load "fnm env --use-on-cd" fnm 'export PATH="$HOME/.local/share/fnm:$PATH"'
+fi
 
 # iTerm 2 tab name for directories
 if [ $ITERM_SESSION_ID ]; then
@@ -38,19 +42,28 @@ fi
     fi
 }
 
-# Load completions efficiently
-if type brew &>/dev/null; then
+# Load completions efficiently (Homebrew is macOS only)
+if [[ "$OSTYPE" == darwin* ]] && type brew &>/dev/null; then
     # Add Homebrew completions to FPATH but don't initialize yet
     FPATH="$(brew --prefix)/share/zsh/site-functions:$(brew --prefix)/share/zsh-completions:${FPATH}"
 fi
 
 # Defer completions but ensure they're loaded before first prompt
 autoload -Uz compinit
-if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null) ]; then
+# Get modification day of .zcompdump (cross-platform)
+_zcompdump_mod_day() {
+    if [[ "$OSTYPE" == darwin* ]]; then
+        stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null
+    else
+        date -r ~/.zcompdump +'%j' 2>/dev/null
+    fi
+}
+if [[ "$(date +'%j')" != "$(_zcompdump_mod_day)" ]]; then
     compinit
 else
     compinit -C
 fi
+unfunction _zcompdump_mod_day 2>/dev/null
 
 # Enable completion caching
 zstyle ':completion::complete:*' use-cache 1
@@ -84,8 +97,8 @@ export LESS_TERMCAP_so=$'\E[38;33;246m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[04;38;5;146m'
 
-# Data directory
-export DATA_DIRECTORY=/Volumes/Data
-
-# Ollama models
-export OLLAMA_MODELS=/Volumes/Data/.ollama/models
+# Data directory (macOS external drive)
+if [[ "$OSTYPE" == darwin* ]]; then
+    export DATA_DIRECTORY=/Volumes/Data
+    export OLLAMA_MODELS=/Volumes/Data/.ollama/models
+fi

@@ -1,5 +1,9 @@
 #  Overriding defaults
-alias ls="ls -hFG"
+if [[ "$OSTYPE" == darwin* ]]; then
+    alias ls="ls -hFG"
+else
+    alias ls="ls -hF --color=auto"
+fi
 alias grep="grep -i"
 alias mkdir="mkdir -p"
 alias systemctl="sudo systemctl"

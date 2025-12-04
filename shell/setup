@@ -30,7 +30,7 @@ echo "  ✓ Copied .zshrc to home directory"
 
 echo ""
 
-# Change default shell to zsh if not already
+# Check if zsh is available
 ZSH_PATH=$(get_zsh_path)
 
 if [[ -z "$ZSH_PATH" ]]; then
@@ -38,24 +38,13 @@ if [[ -z "$ZSH_PATH" ]]; then
     exit 1
 fi
 
+# Prompt user to change shell if not already zsh
 if [[ "$SHELL" != "$ZSH_PATH" && "$SHELL" != "/bin/zsh" && "$SHELL" != "/usr/bin/zsh" ]]; then
-    # Skip chsh in CI environments where it requires interactive password input
-    if [[ -n "$CI" || -n "$GITHUB_ACTIONS" ]]; then
-        echo "ℹ️  Skipping shell change in CI environment"
-    else
-        echo "🐚 Changing default shell to zsh..."
-        # Ensure zsh is in /etc/shells on Linux
-        if [[ "$OS" == "linux" ]] && ! grep -q "$ZSH_PATH" /etc/shells 2>/dev/null; then
-            echo "  → Adding $ZSH_PATH to /etc/shells..."
-            echo "$ZSH_PATH" | sudo tee -a /etc/shells > /dev/null
-        fi
-        if chsh -s "$ZSH_PATH" 2>/dev/null; then
-            echo "✓ Default shell changed to zsh"
-        else
-            echo "⚠️  Could not change default shell (may require password or sudo)"
-            echo "   You can manually change it later with: chsh -s $ZSH_PATH"
-        fi
-    fi
+    echo "🐚 Your default shell is not zsh."
+    echo ""
+    echo "To change your default shell to zsh, run:"
+    echo "  chsh -s $ZSH_PATH"
+    echo ""
 else
     echo "✓ Default shell is already zsh"
 fi
