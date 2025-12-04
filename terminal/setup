@@ -1,21 +1,22 @@
 #!/bin/bash
 set -e
 
+SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+
+# Source platform detection helpers
+source "$SETUP_DIR/lib/platform.sh"
+
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Terminal Environment Setup"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Check for macOS
-if [[ $(uname) != "Darwin" ]]; then
-    echo "⚠️  Not on macOS - this setup is designed for macOS only"
-    exit 1
-fi
+OS=$(detect_os)
 
 echo "📦 Installing terminal tools..."
 echo ""
 
-# Install uv via official installer
+# Install uv via official installer (cross-platform)
 if ! command -v uv &> /dev/null; then
     echo "  → Installing uv package manager..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -24,10 +25,18 @@ else
     echo "  ✓ uv already installed"
 fi
 
-# Install fnm
+# Install fnm (Fast Node Manager)
 if ! command -v fnm &> /dev/null; then
     echo "  → Installing fnm (Node.js version manager)..."
-    brew install fnm
+    case "$OS" in
+        macos)
+            brew install fnm
+            ;;
+        linux)
+            # Use official fnm installer for Linux
+            curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+            ;;
+    esac
     echo "  ✓ fnm installed successfully"
 else
     echo "  ✓ fnm already installed"
@@ -36,20 +45,76 @@ fi
 # Install starship
 if ! command -v starship &> /dev/null; then
     echo "  → Installing starship (terminal prompt)..."
-    brew install starship
+    case "$OS" in
+        macos)
+            brew install starship
+            ;;
+        linux)
+            # Use official starship installer for Linux
+            curl -sS https://starship.rs/install.sh | sh -s -- -y
+            ;;
+    esac
     echo "  ✓ starship installed successfully"
 else
     echo "  ✓ starship already installed"
 fi
 
 # Install zsh-completions
-if ! brew list zsh-completions &> /dev/null; then
-    echo "  → Installing zsh-completions..."
-    brew install zsh-completions
-    echo "  ✓ zsh-completions installed successfully"
-else
-    echo "  ✓ zsh-completions already installed"
-fi
+install_zsh_completions() {
+    case "$OS" in
+        macos)
+            if ! brew list zsh-completions &> /dev/null; then
+                echo "  → Installing zsh-completions..."
+                brew install zsh-completions
+                echo "  ✓ zsh-completions installed successfully"
+            else
+                echo "  ✓ zsh-completions already installed"
+            fi
+            ;;
+        linux)
+            local distro=$(detect_distro)
+            case "$distro" in
+                debian)
+                    if ! dpkg -l zsh-completions 2>/dev/null | grep -q "^ii"; then
+                        echo "  → Installing zsh-completions..."
+                        # zsh-completions may not be in all Debian/Ubuntu repos
+                        # Try to install, but don't fail if not available
+                        if sudo apt-get update -qq && sudo apt-get install -y zsh-completions 2>/dev/null; then
+                            echo "  ✓ zsh-completions installed successfully"
+                        else
+                            echo "  ℹ️  zsh-completions not available in repos (zsh has built-in completions)"
+                        fi
+                    else
+                        echo "  ✓ zsh-completions already installed"
+                    fi
+                    ;;
+                fedora)
+                    if ! rpm -q zsh-completions &> /dev/null; then
+                        echo "  → Installing zsh-completions..."
+                        sudo dnf install -y zsh-completions
+                        echo "  ✓ zsh-completions installed successfully"
+                    else
+                        echo "  ✓ zsh-completions already installed"
+                    fi
+                    ;;
+                arch)
+                    if ! pacman -Q zsh-completions &> /dev/null; then
+                        echo "  → Installing zsh-completions..."
+                        sudo pacman -S --noconfirm zsh-completions
+                        echo "  ✓ zsh-completions installed successfully"
+                    else
+                        echo "  ✓ zsh-completions already installed"
+                    fi
+                    ;;
+                *)
+                    echo "  ℹ️  Skipping zsh-completions (unsupported distro)"
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+install_zsh_completions
 
 echo ""
 echo "✓ Terminal environment setup complete!"

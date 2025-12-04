@@ -9,7 +9,10 @@ on:
 
 jobs:
   test-setup:
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout repository
@@ -20,11 +23,17 @@ jobs:
     - name: Set SETUP_DIR environment variable
       run: echo "SETUP_DIR=$GITHUB_WORKSPACE/setup-repo" >> $GITHUB_ENV
 
-    - name: Install Homebrew (if not present)
+    - name: Install Homebrew (macOS only)
+      if: runner.os == 'macOS'
       run: |
         if ! command -v brew &> /dev/null; then
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        fi
+        # Handle both Intel and Apple Silicon
+        if [ -f /opt/homebrew/bin/brew ]; then
           eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [ -f /usr/local/bin/brew ]; then
+          eval "$(/usr/local/bin/brew shellenv)"
         fi
         echo "✓ Homebrew is available"
 
@@ -65,11 +74,23 @@ jobs:
       run: |
         echo "Checking installed tools..."
 
-        # Source the environment to pick up any PATH changes
-        eval "$(/opt/homebrew/bin/brew shellenv)"
+        # Setup PATH based on OS
+        if [ "$RUNNER_OS" = "macOS" ]; then
+          # Source Homebrew environment
+          if [ -f /opt/homebrew/bin/brew ]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+          elif [ -f /usr/local/bin/brew ]; then
+            eval "$(/usr/local/bin/brew shellenv)"
+          fi
+        else
+          # Linux: Add fnm to PATH (installed via curl script to ~/.local/share/fnm)
+          export PATH="$HOME/.local/share/fnm:$PATH"
+          # Add starship to PATH if installed to /usr/local/bin
+          export PATH="/usr/local/bin:$PATH"
+        fi
 
         # Add uv to PATH (installed via curl script)
-        export PATH="$HOME/.cargo/bin:$PATH"
+        export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
         # Check uv
         if command -v uv &> /dev/null; then
@@ -129,6 +150,12 @@ jobs:
       run: |
         echo "Validating zsh configuration..."
 
+        # Ensure zsh is available
+        if ! command -v zsh &> /dev/null; then
+          echo "⚠ zsh not in PATH, skipping syntax check"
+          exit 0
+        fi
+
         # Source zshrc to check for syntax errors
         # We use -n for syntax check without executing
         if zsh -n ~/.zshrc; then
@@ -171,7 +198,7 @@ jobs:
       run: |
         echo ""
         echo "========================================="
-        echo "✓ All tests passed!"
+        echo "✓ All tests passed on $RUNNER_OS!"
         echo "========================================="
         echo ""
         echo "Verified:"

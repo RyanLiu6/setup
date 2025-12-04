@@ -3,21 +3,44 @@ set -e
 
 SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
 
+# Source platform detection helpers
+source "$SETUP_DIR/lib/platform.sh"
+
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Direnv Setup"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Check for macOS
-if [[ $(uname) != "Darwin" ]]; then
-    echo "⚠️  Not on macOS - this setup is designed for macOS only"
-    exit 1
-fi
+OS=$(detect_os)
 
 # Install direnv
 if ! command -v direnv &> /dev/null; then
     echo "📦 Installing direnv..."
-    brew install direnv
+    case "$OS" in
+        macos)
+            brew install direnv
+            ;;
+        linux)
+            distro=$(detect_distro)
+            case "$distro" in
+                debian)
+                    sudo apt-get update -qq
+                    sudo apt-get install -y direnv
+                    ;;
+                fedora)
+                    sudo dnf install -y direnv
+                    ;;
+                arch)
+                    sudo pacman -S --noconfirm direnv
+                    ;;
+                *)
+                    # Fallback: use official binary installer
+                    echo "  → Using official installer..."
+                    curl -sfL https://direnv.net/install.sh | bash
+                    ;;
+            esac
+            ;;
+    esac
     echo "✓ direnv installed successfully"
 else
     echo "✓ direnv already installed"
