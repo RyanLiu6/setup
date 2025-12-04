@@ -19,6 +19,17 @@ function lazy_load() {
 # Initialize direnv
 eval "$(direnv hook zsh)"
 
+# uv (Python package manager) - installed to ~/.local/bin
+export PATH="$HOME/.local/bin:$PATH"
+
+# pnpm (Node package manager)
+if [[ "$OSTYPE" == darwin* ]]; then
+    export PNPM_HOME="$HOME/Library/pnpm"
+else
+    export PNPM_HOME="$HOME/.local/share/pnpm"
+fi
+export PATH="$PNPM_HOME:$PATH"
+
 # Lazy load fnm, but set up auto-use
 if [[ "$OSTYPE" == darwin* ]]; then
     lazy_load "fnm env --use-on-cd" fnm 'export PATH="$HOME/Library/Application Support/fnm:$PATH"'
