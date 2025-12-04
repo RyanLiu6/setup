@@ -67,8 +67,8 @@ shellperf() {
     local start_time=$((EPOCHREALTIME*1000))
     _shellperf_last_time=$start_time
 
-    # Reload shell configuration (our config only)
-    source ~/dev/setup/shell/.zshrc
+    # Reload full shell configuration (including ~/.zshrc additions)
+    source ~/.zshrc
 
     local end_time=$((EPOCHREALTIME*1000))
     local config_duration=$((end_time - start_time))
