@@ -4,11 +4,11 @@ A modular development environment configuration focusing on Python, Node.js, and
 
 ## Overview
 
-This repository contains configuration for:
+This repository contains cross-platform configuration for macOS and Linux:
 
 - 🐚 Shell (ZSH) configuration with performance optimizations
 - 🐍 Python environment management (uv, venv, poetry)
-- 📦 Node.js version management (fnm)
+- 📦 Node.js version management (fnm + pnpm)
 - 🔧 Development tools (direnv, starship)
 - 🎨 Terminal customization
 
@@ -45,9 +45,9 @@ cd $SETUP_DIR
 ## Components
 ### Terminal Setup
 - Fast python package management with uv
-- Node.js version management with fnm
+- Node.js version management with fnm + pnpm
 - Custom prompt with starship
-- Color schemes for Terminal.app and iTerm2
+- Color schemes for Terminal.app and iTerm2 (macOS)
 
 [Learn more](terminal/README.md)
 
@@ -90,10 +90,16 @@ cd $SETUP_DIR
 
 ## Requirements
 
-- macOS (primary support)
-- Homebrew
+### macOS
+- Homebrew (installed automatically if missing)
 - Git
-- Zsh
+- Zsh (default on macOS)
+
+### Linux
+- Debian/Ubuntu, Fedora/RHEL, or Arch-based distributions
+- Git
+- Zsh (installed automatically if missing)
+- sudo access for package installation
 
 ## Customization
 
@@ -112,10 +118,10 @@ Each component can be customized by editing its configuration:
 
 ## Testing
 
-This repository includes automated testing via GitHub Actions (free for public repositories). The test workflow:
+This repository includes automated testing via GitHub Actions. The test workflow:
 
 - Runs on every push and pull request
-- Tests on actual macOS runners
+- Tests on both macOS and Ubuntu runners
 - Verifies all setup scripts run without errors
 - Validates that all configuration files are created
 - Confirms all tools are installed and accessible

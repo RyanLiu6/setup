@@ -1,11 +1,13 @@
 # Shell Configuration
 
-This directory contains ZSH shell configuration:
-- `.zprofile`: Environment setup loaded at login
+Cross-platform ZSH shell configuration for macOS and Linux.
+
+This directory contains:
+- `.zprofile`: Environment setup loaded at login (Homebrew init on macOS)
 - `.zshrc`: Main shell configuration
 - `.zsh/`: Directory containing modular shell configurations
   - `base.zsh`: Core shell settings, performance optimizations, and utility functions
-  - `aliases.zsh`: Command aliases and helper functions
+  - `aliases.zsh`: Command aliases and helper functions (platform-aware)
   - `shellperf.zsh`: Shell performance profiling utilities
   - `work.zsh`: Work-specific configuration (customize as needed)
 - `.zshrc.local.example`: Template for local customizations (copy to `~/.zshrc.local`)
@@ -14,9 +16,9 @@ This directory contains ZSH shell configuration:
 
 ### Performance Optimizations
 - Lazy loading for fnm (Node.js version manager)
-- Completion caching
+- Completion caching (Homebrew completions on macOS)
 - Command evaluation caching
-- Optimized completion initialization
+- Optimized completion initialization (cross-platform)
 
 ### Built-in Commands
 
@@ -72,7 +74,12 @@ Common tags: `base`, `work`, `local`, `machine`, etc.
 
 Running `./setup` will:
 1. Copy all shell configuration files to `~/.zshrc` and `~/.zprofile`
-2. Set ZSH as the default shell (if not already)
+2. Prompt you to set ZSH as your default shell (if not already)
+
+To change your default shell to zsh:
+```bash
+chsh -s $(which zsh)
+```
 
 > [!NOTE]
 > Modules are dynamically sourced in `.zshrc`. You can make edits and run `reload` to see changes immediately.

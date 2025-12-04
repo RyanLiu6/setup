@@ -1,37 +1,45 @@
 # Terminal Setup
 
-This directory contains terminal configuration and tools setup.
+Cross-platform terminal configuration and tools setup for macOS and Linux.
 
 ## Contents
 
-- `colors/`: Terminal color schemes
+- `colors/`: Terminal color schemes (macOS)
   - `*.itermcolors`: Color schemes for iTerm2
-- `Custom.terminal`: Profile for Terminal.app
+- `Custom.terminal`: Profile for Terminal.app (macOS)
 - `starship.toml`: Starship prompt configuration
 
 ## Installed Tools
 
-Running `./setup` installs the following tools via Homebrew:
+Running `./setup` installs the following tools:
 
 - **uv**: Fast Python package installer and virtual environment manager
-- **fnm**: Fast Node.js version manager with automatic version switching
+- **fnm**: Fast Node.js version manager (auto-switches per project)
+- **pnpm**: Fast, disk-efficient package manager
 - **starship**: Cross-shell prompt with Git integration and customization
 - **zsh-completions**: Additional completion definitions for ZSH
 
-All tools are installed via Homebrew for consistency and security.
+### Installation Methods
+
+| Tool | macOS | Linux |
+|------|-------|-------|
+| uv | Official installer | Official installer |
+| fnm | Homebrew | Official installer |
+| starship | Homebrew | Official installer |
+| zsh-completions | Homebrew | System package manager |
 
 ## Setup
 
 Running `./setup` will:
-1. Verify macOS environment
-2. Install all required tools via Homebrew (if not already installed)
+1. Detect your platform (macOS or Linux)
+2. Install all required tools using the appropriate method
 3. Provide status feedback for each installation
 
-## Terminal Color Schemes (Optional)
+## Terminal Color Schemes (macOS Only)
 
 After setup, you can optionally install custom color schemes:
 
-**Terminal.app (macOS default):**
+**Terminal.app:**
 1. Open Terminal app
 2. Go to Terminal → Settings → Profiles
 3. Click Import
@@ -52,3 +60,17 @@ The custom Starship prompt is configured in `starship.toml`. It includes:
 - Language version indicators (Python, Node.js, etc.)
 
 The configuration is automatically loaded via the `STARSHIP_CONFIG` environment variable set in `.zshrc`.
+
+## Node.js with pnpm
+
+fnm automatically installs and switches Node versions per-project when a `.node-version` or `.nvmrc` file is present.
+
+```bash
+# Install Node for a project
+cd my-project
+echo "20" > .node-version  # fnm will auto-install on cd
+
+# Or manually install a version
+fnm install 20
+fnm use 20
+```
