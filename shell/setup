@@ -16,17 +16,34 @@ OS=$(detect_os)
 # Ensure zsh is installed (especially important for Linux)
 ensure_zsh
 
-echo "📝 Copying shell configuration files..."
+echo "📝 Setting up shell configuration..."
 echo ""
 
-# Copy shell config files
+# Copy .zprofile
 if [[ -f "$SETUP_DIR/shell/.zprofile" ]]; then
     cp "$SETUP_DIR/shell/.zprofile" ~/.zprofile
     echo "  ✓ Copied .zprofile to home directory"
 fi
 
-cp "$SETUP_DIR/shell/.zshrc" ~/.zshrc
-echo "  ✓ Copied .zshrc to home directory"
+# Setup ~/.zshrc as a loader that sources our config
+# This allows tools to add lines to ~/.zshrc without breaking our setup
+if [[ ! -f ~/.zshrc ]]; then
+    # No .zshrc exists, create from loader template with correct path
+    sed "s|__SETUP_DIR__|$SETUP_DIR|g" "$SETUP_DIR/shell/.zshrc.loader" > ~/.zshrc
+    echo "  ✓ Created ~/.zshrc (sources $SETUP_DIR/shell/.zshrc)"
+elif ! grep -qF "source $SETUP_DIR/shell/.zshrc" ~/.zshrc; then
+    # .zshrc exists but doesn't source our config, prepend loader content
+    echo "  → Existing ~/.zshrc found, adding source line..."
+    tmp_file=$(mktemp)
+    sed "s|__SETUP_DIR__|$SETUP_DIR|g" "$SETUP_DIR/shell/.zshrc.loader" > "$tmp_file"
+    echo "" >> "$tmp_file"
+    echo "# Previous ~/.zshrc content below" >> "$tmp_file"
+    cat ~/.zshrc >> "$tmp_file"
+    mv "$tmp_file" ~/.zshrc
+    echo "  ✓ Updated ~/.zshrc to source our config (preserved existing content)"
+else
+    echo "  ✓ ~/.zshrc already sources our config"
+fi
 
 echo ""
 

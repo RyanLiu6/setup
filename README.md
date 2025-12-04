@@ -52,10 +52,10 @@ cd $SETUP_DIR
 [Learn more](terminal/README.md)
 
 ### Shell Configuration
-- Modular ZSH configuration
+- Modular ZSH configuration (edit `~/dev/setup/shell/` directly)
+- `~/.zshrc` acts as loader—tools can add lines without breaking config
 - Lazy loading for better startup time
-- Optimized completions
-- Useful aliases and functions
+- Total startup time tracking (including tool-added lines)
 
 [Learn more](shell/README.md)
 
