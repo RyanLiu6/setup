@@ -13,6 +13,20 @@ fi
 if [[ ! -v _shellperf_enabled ]]; then
     typeset -g _shellperf_enabled=0
 fi
+if [[ ! -v _shellperf_total_time ]]; then
+    typeset -g _shellperf_total_time=0
+fi
+
+# One-shot precmd hook to capture total startup time (including tool-added lines in ~/.zshrc)
+_shellperf_capture_total() {
+    if [[ -v _ZSHRC_START_TIME ]]; then
+        _shellperf_total_time=$(( (EPOCHREALTIME - _ZSHRC_START_TIME) * 1000 ))
+        unset _ZSHRC_START_TIME
+    fi
+    # Remove ourselves from precmd_functions (one-shot)
+    precmd_functions=(${precmd_functions:#_shellperf_capture_total})
+}
+precmd_functions+=(_shellperf_capture_total)
 
 # Mark a timing point with a tag
 # Usage: _shellperf_tag "tag" "description"
@@ -53,11 +67,11 @@ shellperf() {
     local start_time=$((EPOCHREALTIME*1000))
     _shellperf_last_time=$start_time
 
-    # Reload shell configuration
-    source ~/.zshrc
+    # Reload shell configuration (our config only)
+    source ~/dev/setup/shell/.zshrc
 
     local end_time=$((EPOCHREALTIME*1000))
-    local total_duration=$((end_time - start_time))
+    local config_duration=$((end_time - start_time))
 
     # Disable profiling
     _shellperf_enabled=0
@@ -86,6 +100,9 @@ shellperf() {
     done
 
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "Total startup time: ${total_duration}ms"
+    echo "Config load time: ${config_duration}ms"
+    if [[ $_shellperf_total_time -gt 0 ]]; then
+        printf "Total startup time: %.0fms (captured at first prompt)\n" $_shellperf_total_time
+    fi
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
 }
