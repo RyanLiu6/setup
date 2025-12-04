@@ -20,13 +20,6 @@ done
 
 _shellperf_tag "base" "Loaded base configs" 2>/dev/null || true
 
-# Source local customizations (for work-specific configs, not tracked in git)
-if [[ -f ~/.zshrc.local ]]; then
-    _shellperf_tag "local" "Loading local customizations" 2>/dev/null || true
-    source ~/.zshrc.local
-    _shellperf_tag "local" "Loaded local customizations" 2>/dev/null || true
-fi
-
 # Starship is our chosen prompt
 if [[ ! -v evaluated_cmds[starship] ]]; then
     _shellperf_tag "base" "Loading Starship prompt" 2>/dev/null || true
