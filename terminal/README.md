@@ -19,6 +19,8 @@ Running `./setup` installs the following tools:
 - **starship**: Cross-shell prompt with Git integration and customization
 - **zsh-completions**: Additional completion definitions for ZSH
 
+PATH configuration for these tools is handled in `shell/.zsh/base.zsh`.
+
 ### Installation Methods
 
 | Tool | macOS | Linux |

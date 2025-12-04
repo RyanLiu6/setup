@@ -18,7 +18,7 @@ Cross-platform ZSH shell configuration for macOS and Linux.
 - `.zshrc`: Main shell configuration (sourced by ~/.zshrc)
 - `.zshrc.loader`: Template for ~/.zshrc loader
 - `.zsh/`: Directory containing modular shell configurations
-  - `base.zsh`: Core shell settings, performance optimizations, and utility functions
+  - `base.zsh`: Core shell settings, tool PATH setup (uv, pnpm, fnm), and performance optimizations
   - `aliases.zsh`: Command aliases and helper functions (platform-aware)
   - `shellperf.zsh`: Shell performance profiling utilities
   - `work.zsh`: Work-specific configuration (customize as needed)
