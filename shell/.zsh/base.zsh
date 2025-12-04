@@ -60,7 +60,7 @@ if [[ "$OSTYPE" == darwin* ]] && type brew &>/dev/null; then
 fi
 
 # Defer completions but ensure they're loaded before first prompt
-autoload -Uz compinit bashcompinit
+autoload -Uz compinit
 # Get modification day of .zcompdump (cross-platform)
 _zcompdump_mod_day() {
     if [[ "$OSTYPE" == darwin* ]]; then
@@ -74,7 +74,6 @@ if [[ "$(date +'%j')" != "$(_zcompdump_mod_day)" ]]; then
 else
     compinit -C
 fi
-bashcompinit
 unfunction _zcompdump_mod_day 2>/dev/null
 
 # Enable completion caching
