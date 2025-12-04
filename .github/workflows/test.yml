@@ -49,6 +49,14 @@ jobs:
         # Check zsh configs
         if [ -f ~/.zshrc ]; then
           echo "✓ ~/.zshrc created"
+          # Verify it sources our config (path varies based on SETUP_DIR)
+          if grep -q "source .*/shell/.zshrc" ~/.zshrc; then
+            echo "✓ ~/.zshrc sources our config"
+          else
+            echo "✗ ~/.zshrc does not source our config"
+            cat ~/.zshrc
+            exit 1
+          fi
         else
           echo "✗ ~/.zshrc missing"
           exit 1

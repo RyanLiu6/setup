@@ -1,0 +1,12 @@
+# ~/.zshrc loader
+# This file sources the main configuration and captures total startup time.
+# Tools may add lines below the source statement.
+
+# Record start time for shell performance tracking
+zmodload zsh/datetime
+typeset -g _ZSHRC_START_TIME=$EPOCHREALTIME
+
+# Source main configuration
+source __SETUP_DIR__/shell/.zshrc
+
+# Tools install themselves below this line
