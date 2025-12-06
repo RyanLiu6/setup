@@ -194,6 +194,24 @@ jobs:
           exit 1
         fi
 
+        # Check fetch.prune
+        FETCH_PRUNE=$(git config --global fetch.prune)
+        if [ "$FETCH_PRUNE" = "true" ]; then
+          echo "✓ Git fetch.prune is enabled"
+        else
+          echo "✗ Git fetch.prune not enabled"
+          exit 1
+        fi
+
+        # Check alias.com
+        ALIAS_COM=$(git config --global alias.com)
+        if [ -n "$ALIAS_COM" ]; then
+          echo "✓ Git alias.com is configured"
+        else
+          echo "✗ Git alias.com not configured"
+          exit 1
+        fi
+
     - name: Verify zsh configuration is valid
       run: |
         echo "Validating zsh configuration..."
@@ -241,6 +259,53 @@ jobs:
 
         echo "✓ Setup script is idempotent (can be run multiple times)"
 
+    - name: Test reset script
+      run: |
+        echo "Testing reset script..."
+        cd $SETUP_DIR
+
+        # Run reset (auto-confirm with yes)
+        echo "y" | ./reset
+
+        # Verify configs were recreated by checking symlinks exist
+        if [ -L ~/.config/direnv/direnvrc ]; then
+          echo "✓ direnvrc symlink recreated"
+        else
+          echo "✗ direnvrc symlink not recreated"
+          exit 1
+        fi
+
+        if [ -L ~/.gitignore_global ]; then
+          echo "✓ .gitignore_global symlink recreated"
+        else
+          echo "✗ .gitignore_global symlink not recreated"
+          exit 1
+        fi
+
+        if [ -L ~/.config/ghostty/config ]; then
+          echo "✓ ghostty config symlink recreated"
+        else
+          echo "✗ ghostty config symlink not recreated"
+          exit 1
+        fi
+
+        # Verify git config was re-applied
+        if [ "$(git config --global fetch.prune)" = "true" ]; then
+          echo "✓ Git fetch.prune re-configured"
+        else
+          echo "✗ Git fetch.prune not re-configured"
+          exit 1
+        fi
+
+        if [ -n "$(git config --global alias.com)" ]; then
+          echo "✓ Git alias.com re-configured"
+        else
+          echo "✗ Git alias.com not re-configured"
+          exit 1
+        fi
+
+        echo "✓ Reset script works correctly"
+
     - name: Summary
       if: success()
       run: |
@@ -253,6 +318,7 @@ jobs:
         echo "  - All setup scripts run without errors"
         echo "  - Configuration files are symlinked (direnv, git, ghostty)"
         echo "  - All tools installed (uv, fnm, pnpm, starship, direnv, ghostty)"
-        echo "  - Git configuration is correct"
+        echo "  - Git configuration is correct (excludesfile, autoSetupRemote, prune, alias.com)"
         echo "  - ZSH configuration is valid"
         echo "  - Setup is idempotent"
+        echo "  - Reset script tears down and rebuilds correctly"
