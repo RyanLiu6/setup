@@ -1,0 +1,239 @@
+#!/bin/bash
+set -e
+
+# Reset script - Nuclear approach to fix broken setups
+# This script removes and recreates all symlinks and reinstalls tools if needed
+# Use this when something is broken and you want a fresh start
+
+SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+
+# Source platform detection helpers
+source "$SETUP_DIR/lib/platform.sh"
+
+echo "======================================"
+echo "Development Environment Reset"
+echo "======================================"
+echo ""
+echo "⚠️  This script will:"
+echo "  - Remove and recreate all config symlinks"
+echo "  - Uninstall and reinstall tools if broken"
+echo "  - Reset shell configuration"
+echo ""
+read -p "Continue? [y/N] " -n 1 -r
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Aborted."
+    exit 1
+fi
+
+echo ""
+
+OS=$(detect_os)
+print_platform_info
+echo ""
+
+# ============================================
+# Reset Shell Configuration
+# ============================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Resetting Shell Configuration"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Reset .zprofile
+if [[ -e ~/.zprofile ]]; then
+    echo "  → Removing ~/.zprofile..."
+    rm -f ~/.zprofile
+fi
+if [[ -f "$SETUP_DIR/shell/.zprofile" ]]; then
+    ln -s "$SETUP_DIR/shell/.zprofile" ~/.zprofile
+    echo "  ✓ Recreated ~/.zprofile symlink"
+fi
+
+# Reset .zshrc (recreate loader)
+if [[ -f ~/.zshrc ]]; then
+    BACKUP_FILE=~/.zshrc.backup.$(date +%Y%m%d_%H%M%S)
+    echo "  → Backing up ~/.zshrc to $BACKUP_FILE..."
+    cp ~/.zshrc "$BACKUP_FILE"
+fi
+sed "s|__SETUP_DIR__|$SETUP_DIR|g" "$SETUP_DIR/shell/.zshrc.loader" > ~/.zshrc
+echo "  ✓ Recreated ~/.zshrc loader"
+
+echo ""
+
+# ============================================
+# Reset Direnv Configuration
+# ============================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Resetting Direnv Configuration"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+mkdir -p ~/.config/direnv
+if [[ -e ~/.config/direnv/direnvrc ]]; then
+    echo "  → Removing ~/.config/direnv/direnvrc..."
+    rm -f ~/.config/direnv/direnvrc
+fi
+ln -s "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
+echo "  ✓ Recreated direnvrc symlink"
+
+# Reinstall direnv if missing
+if ! command -v direnv &> /dev/null; then
+    echo "  → Reinstalling direnv..."
+    case "$OS" in
+        macos)
+            brew reinstall direnv
+            ;;
+        linux)
+            distro=$(detect_distro)
+            case "$distro" in
+                debian) sudo apt-get install -y --reinstall direnv ;;
+                fedora) sudo dnf reinstall -y direnv ;;
+                arch) sudo pacman -S --noconfirm direnv ;;
+            esac
+            ;;
+    esac
+    echo "  ✓ direnv reinstalled"
+else
+    echo "  ✓ direnv is installed"
+fi
+
+echo ""
+
+# ============================================
+# Reset Git Configuration
+# ============================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Resetting Git Configuration"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+if [[ -e ~/.gitignore_global ]]; then
+    echo "  → Removing ~/.gitignore_global..."
+    rm -f ~/.gitignore_global
+fi
+ln -s "$SETUP_DIR/git/.gitignore_global" ~/.gitignore_global
+echo "  ✓ Recreated .gitignore_global symlink"
+
+git config --global core.excludesfile ~/.gitignore_global
+git config --global push.autoSetupRemote true
+echo "  ✓ Reset git configuration"
+
+echo ""
+
+# ============================================
+# Reset Ghostty Configuration
+# ============================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Resetting Ghostty Configuration"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+mkdir -p ~/.config/ghostty
+if [[ -e ~/.config/ghostty/config ]]; then
+    echo "  → Removing ~/.config/ghostty/config..."
+    rm -f ~/.config/ghostty/config
+fi
+if [[ -f "$SETUP_DIR/terminal/ghostty/config" ]]; then
+    ln -s "$SETUP_DIR/terminal/ghostty/config" ~/.config/ghostty/config
+    echo "  ✓ Recreated Ghostty config symlink"
+fi
+
+# Reinstall Ghostty if missing (macOS only via brew)
+case "$OS" in
+    macos)
+        if ! brew list --cask ghostty &> /dev/null; then
+            echo "  → Reinstalling Ghostty..."
+            brew install --cask ghostty
+            echo "  ✓ Ghostty reinstalled"
+        else
+            echo "  ✓ Ghostty is installed"
+        fi
+        ;;
+    linux)
+        if command -v ghostty &> /dev/null; then
+            echo "  ✓ Ghostty is installed"
+        else
+            echo "  ℹ️  Ghostty not installed (run ./setup to install)"
+        fi
+        ;;
+esac
+
+echo ""
+
+# ============================================
+# Reset Terminal Tools
+# ============================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Resetting Terminal Tools"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Check and reinstall uv
+if ! command -v uv &> /dev/null; then
+    echo "  → Reinstalling uv..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    echo "  ✓ uv reinstalled"
+else
+    echo "  ✓ uv is installed"
+fi
+
+# Check and reinstall fnm
+if ! command -v fnm &> /dev/null; then
+    echo "  → Reinstalling fnm..."
+    case "$OS" in
+        macos)
+            brew reinstall fnm
+            ;;
+        linux)
+            curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+            ;;
+    esac
+    echo "  ✓ fnm reinstalled"
+else
+    echo "  ✓ fnm is installed"
+fi
+
+# Check and reinstall pnpm
+if ! command -v pnpm &> /dev/null; then
+    echo "  → Reinstalling pnpm..."
+    curl -fsSL https://get.pnpm.io/install.sh | sh -
+    echo "  ✓ pnpm reinstalled"
+else
+    echo "  ✓ pnpm is installed"
+fi
+
+# Check and reinstall starship
+if ! command -v starship &> /dev/null; then
+    echo "  → Reinstalling starship..."
+    case "$OS" in
+        macos)
+            brew reinstall starship
+            ;;
+        linux)
+            curl -sS https://starship.rs/install.sh | sh -s -- -y
+            ;;
+    esac
+    echo "  ✓ starship reinstalled"
+else
+    echo "  ✓ starship is installed"
+fi
+
+echo ""
+
+# ============================================
+# Summary
+# ============================================
+echo "======================================"
+echo "✓ Reset complete!"
+echo "======================================"
+echo ""
+echo "All configurations have been reset:"
+echo "  ✓ Shell configuration (loader recreated)"
+echo "  ✓ Direnv configuration (symlink)"
+echo "  ✓ Git configuration (symlink)"
+echo "  ✓ Ghostty configuration (symlink)"
+echo "  ✓ Terminal tools verified/reinstalled"
+echo ""
+echo "Please restart your terminal or run: source ~/.zshrc"
+echo ""

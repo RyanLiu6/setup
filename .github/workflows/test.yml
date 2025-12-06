@@ -62,19 +62,27 @@ jobs:
           exit 1
         fi
 
-        # Check direnv config
-        if [ -f ~/.config/direnv/direnvrc ]; then
-          echo "✓ ~/.config/direnv/direnvrc created"
+        # Check direnv config (symlink)
+        if [ -L ~/.config/direnv/direnvrc ]; then
+          echo "✓ ~/.config/direnv/direnvrc linked"
         else
-          echo "✗ ~/.config/direnv/direnvrc missing"
+          echo "✗ ~/.config/direnv/direnvrc not linked"
           exit 1
         fi
 
-        # Check git config
-        if [ -f ~/.gitignore_global ]; then
-          echo "✓ ~/.gitignore_global created"
+        # Check git config (symlink)
+        if [ -L ~/.gitignore_global ]; then
+          echo "✓ ~/.gitignore_global linked"
         else
-          echo "✗ ~/.gitignore_global missing"
+          echo "✗ ~/.gitignore_global not linked"
+          exit 1
+        fi
+
+        # Check Ghostty config
+        if [ -L ~/.config/ghostty/config ]; then
+          echo "✓ ~/.config/ghostty/config linked"
+        else
+          echo "✗ ~/.config/ghostty/config not linked"
           exit 1
         fi
 
@@ -143,6 +151,18 @@ jobs:
         else
           echo "✗ pnpm not found"
           exit 1
+        fi
+
+        # Check Ghostty (macOS only - installed via Homebrew cask)
+        if [ "$RUNNER_OS" = "macOS" ]; then
+          if brew list --cask ghostty &> /dev/null; then
+            echo "✓ Ghostty is installed"
+          else
+            echo "✗ Ghostty not installed"
+            exit 1
+          fi
+        else
+          echo "ℹ️  Skipping Ghostty check on Linux (optional installation)"
         fi
 
     - name: Verify git configuration
@@ -224,8 +244,8 @@ jobs:
         echo ""
         echo "Verified:"
         echo "  - All setup scripts run without errors"
-        echo "  - Configuration files are created"
-        echo "  - All tools installed (uv, fnm, pnpm, starship, direnv)"
+        echo "  - Configuration files are symlinked (direnv, git, ghostty)"
+        echo "  - All tools installed (uv, fnm, pnpm, starship, direnv, ghostty)"
         echo "  - Git configuration is correct"
         echo "  - ZSH configuration is valid"
         echo "  - Setup is idempotent"

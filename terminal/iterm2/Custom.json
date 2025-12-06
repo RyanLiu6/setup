@@ -98,6 +98,14 @@
     "Green Component" : 0.76917916536331177
   },
   "Keyboard Map" : {
+    "0x5b-0x320000" : {
+      "Action" : 32,
+      "Text" : ""
+    },
+    "0x5d-0x320000" : {
+      "Action" : 33,
+      "Text" : ""
+    },
     "0xf703-0x320000-0x7c" : {
       "Version" : 2,
       "Apply Mode" : 0,

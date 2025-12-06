@@ -17,9 +17,18 @@ fi
 echo "📝 Configuring git..."
 echo ""
 
-# Setup global gitignore
-cp "$SETUP_DIR/git/.gitignore_global" ~/.gitignore_global
-echo "  → Copied global gitignore to ~/.gitignore_global"
+# Symlink global gitignore
+if [ -L ~/.gitignore_global ]; then
+    echo "  ✓ .gitignore_global already linked"
+elif [ -f ~/.gitignore_global ]; then
+    echo "  → Backing up existing .gitignore_global..."
+    mv ~/.gitignore_global ~/.gitignore_global.backup
+    ln -s "$SETUP_DIR/git/.gitignore_global" ~/.gitignore_global
+    echo "  ✓ .gitignore_global linked (backup saved)"
+else
+    ln -s "$SETUP_DIR/git/.gitignore_global" ~/.gitignore_global
+    echo "  ✓ .gitignore_global linked"
+fi
 
 git config --global core.excludesfile ~/.gitignore_global
 echo "  ✓ Configured git to use global gitignore"

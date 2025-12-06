@@ -52,9 +52,18 @@ echo ""
 echo "📝 Configuring direnv..."
 mkdir -p ~/.config/direnv
 
-# Copy direnv config
-cp "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
-echo "✓ Configuration copied to ~/.config/direnv/direnvrc"
+# Symlink direnv config
+if [ -L ~/.config/direnv/direnvrc ]; then
+    echo "✓ direnvrc already linked"
+elif [ -f ~/.config/direnv/direnvrc ]; then
+    echo "  → Backing up existing direnvrc..."
+    mv ~/.config/direnv/direnvrc ~/.config/direnv/direnvrc.backup
+    ln -s "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
+    echo "✓ direnvrc linked (backup saved)"
+else
+    ln -s "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
+    echo "✓ direnvrc linked to ~/.config/direnv/direnvrc"
+fi
 
 echo ""
 echo "✓ direnv setup complete!"
