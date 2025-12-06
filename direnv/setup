@@ -21,24 +21,8 @@ if ! command -v direnv &> /dev/null; then
             brew install direnv
             ;;
         linux)
-            distro=$(detect_distro)
-            case "$distro" in
-                debian)
-                    sudo apt-get update -qq
-                    sudo apt-get install -y direnv
-                    ;;
-                fedora)
-                    sudo dnf install -y direnv
-                    ;;
-                arch)
-                    sudo pacman -S --noconfirm direnv
-                    ;;
-                *)
-                    # Fallback: use official binary installer
-                    echo "  → Using official installer..."
-                    curl -sfL https://direnv.net/install.sh | bash
-                    ;;
-            esac
+            sudo apt-get update -qq
+            sudo apt-get install -y direnv
             ;;
     esac
     echo "✓ direnv installed successfully"
@@ -52,9 +36,18 @@ echo ""
 echo "📝 Configuring direnv..."
 mkdir -p ~/.config/direnv
 
-# Copy direnv config
-cp "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
-echo "✓ Configuration copied to ~/.config/direnv/direnvrc"
+# Symlink direnv config
+if [ -L ~/.config/direnv/direnvrc ]; then
+    echo "✓ direnvrc already linked"
+elif [ -f ~/.config/direnv/direnvrc ]; then
+    echo "  → Backing up existing direnvrc..."
+    mv ~/.config/direnv/direnvrc ~/.config/direnv/direnvrc.backup
+    ln -s "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
+    echo "✓ direnvrc linked (backup saved)"
+else
+    ln -s "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
+    echo "✓ direnvrc linked to ~/.config/direnv/direnvrc"
+fi
 
 echo ""
 echo "✓ direnv setup complete!"

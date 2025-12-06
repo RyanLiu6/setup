@@ -10,7 +10,7 @@ This repository contains cross-platform configuration for macOS and Linux:
 - 🐍 Python environment management (uv, venv, poetry)
 - 📦 Node.js version management (fnm + pnpm)
 - 🔧 Development tools (direnv, starship)
-- 🎨 Terminal customization
+- 🎨 Terminal customization (Ghostty, iTerm2)
 
 ## Quick Start
 
@@ -32,21 +32,21 @@ This repository contains cross-platform configuration for macOS and Linux:
 
 **Note:** Later on, you can use `reload` to restart your terminal.
 
-## Migrating from Older Versions
+## Resetting a Broken Setup
 
-If you have an existing setup from before the loader architecture was introduced, run:
+If something is broken or you want a fresh start, run the reset script:
 
 ```bash
 cd ~/dev/setup
-git pull origin master
-./migrate
+./reset
 ```
 
 This will:
-1. Back up your existing `~/.zshrc`
-2. Run the full setup
-3. Clean up `~/.zshrc` to remove content now handled by tracked config
-4. Preserve tool-installed blocks (gohan, bento, instacart, etc.)
+1. Remove and recreate all config symlinks
+2. Reinstall any missing tools
+3. Reset shell configuration (backs up existing `.zshrc`)
+
+The reset script takes a "nuclear" approach - it deletes and recreates everything to ensure a clean state.
 
 ## Custom Installation Path
 
@@ -63,7 +63,8 @@ cd $SETUP_DIR
 - Fast python package management with uv
 - Node.js version management with fnm + pnpm
 - Custom prompt with starship
-- Color schemes for Terminal.app and iTerm2 (macOS)
+- Ghostty terminal emulator with custom color scheme
+- iTerm2 color schemes and profiles (macOS)
 
 [Learn more](terminal/README.md)
 
@@ -104,15 +105,23 @@ cd $SETUP_DIR
 - Custom terminal prompt with git status
 - Docker container status in prompt
 
-## Requirements
+## Supported Platforms
 
-### macOS
+This setup is tested and fully supported on:
+
+- **macOS** (Intel and Apple Silicon)
+- **Linux** (Debian/Ubuntu)
+
+Other Linux distributions may work but are not officially supported.
+
+### Requirements
+
+**macOS:**
 - Homebrew (installed automatically if missing)
 - Git
 - Zsh (default on macOS)
 
-### Linux
-- Debian/Ubuntu, Fedora/RHEL, or Arch-based distributions
+**Linux (Debian/Ubuntu):**
 - Git
 - Zsh (installed automatically if missing)
 - sudo access for package installation
@@ -122,9 +131,11 @@ cd $SETUP_DIR
 Each component can be customized by editing its configuration:
 
 - Shell: `shell/.zsh/*.zsh`
-- Terminal: `terminal/starship.toml`
+- Terminal: `terminal/starship.toml`, `terminal/ghostty/config`
 - Python: `direnv/direnvrc`
 - Git: `git/.gitignore_global`
+
+All configuration files are symlinked, so changes are immediately reflected without re-running setup.
 
 ## Useful Commands
 

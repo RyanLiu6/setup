@@ -16,7 +16,7 @@ detect_os() {
     esac
 }
 
-# Detect Linux distribution
+# Detect Linux distribution (only Debian-based distros are officially supported)
 detect_distro() {
     if [[ -f /etc/os-release ]]; then
         . /etc/os-release
@@ -24,23 +24,11 @@ detect_distro() {
             ubuntu|debian|pop|linuxmint)
                 echo "debian"
                 ;;
-            fedora|rhel|centos|rocky|almalinux)
-                echo "fedora"
-                ;;
-            arch|manjaro|endeavouros)
-                echo "arch"
-                ;;
             *)
-                # Check ID_LIKE for derivatives
+                # Check ID_LIKE for Debian derivatives
                 case "$ID_LIKE" in
                     *debian*|*ubuntu*)
                         echo "debian"
-                        ;;
-                    *fedora*|*rhel*)
-                        echo "fedora"
-                        ;;
-                    *arch*)
-                        echo "arch"
                         ;;
                     *)
                         echo "unknown"
@@ -70,35 +58,12 @@ install_package() {
             return 1  # Already installed
             ;;
         linux)
-            local distro=$(detect_distro)
-            case "$distro" in
-                debian)
-                    if ! dpkg -l "$linux_pkg" 2>/dev/null | grep -q "^ii"; then
-                        sudo apt-get update -qq
-                        sudo apt-get install -y "$linux_pkg"
-                        return 0
-                    fi
-                    return 1
-                    ;;
-                fedora)
-                    if ! rpm -q "$linux_pkg" &> /dev/null; then
-                        sudo dnf install -y "$linux_pkg"
-                        return 0
-                    fi
-                    return 1
-                    ;;
-                arch)
-                    if ! pacman -Q "$linux_pkg" &> /dev/null; then
-                        sudo pacman -S --noconfirm "$linux_pkg"
-                        return 0
-                    fi
-                    return 1
-                    ;;
-                *)
-                    echo "⚠️  Unsupported Linux distribution"
-                    return 2
-                    ;;
-            esac
+            if ! dpkg -l "$linux_pkg" 2>/dev/null | grep -q "^ii"; then
+                sudo apt-get update -qq
+                sudo apt-get install -y "$linux_pkg"
+                return 0
+            fi
+            return 1
             ;;
         *)
             echo "⚠️  Unsupported operating system"
@@ -119,21 +84,7 @@ is_package_installed() {
             brew list "$macos_pkg" &> /dev/null
             ;;
         linux)
-            local distro=$(detect_distro)
-            case "$distro" in
-                debian)
-                    dpkg -l "$linux_pkg" 2>/dev/null | grep -q "^ii"
-                    ;;
-                fedora)
-                    rpm -q "$linux_pkg" &> /dev/null
-                    ;;
-                arch)
-                    pacman -Q "$linux_pkg" &> /dev/null
-                    ;;
-                *)
-                    return 1
-                    ;;
-            esac
+            dpkg -l "$linux_pkg" 2>/dev/null | grep -q "^ii"
             ;;
         *)
             return 1
