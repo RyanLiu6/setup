@@ -125,6 +125,81 @@ install_zsh_completions() {
 
 install_zsh_completions
 
+# Install Ghostty terminal emulator
+install_ghostty() {
+    case "$OS" in
+        macos)
+            if ! brew list --cask ghostty &> /dev/null; then
+                echo "  → Installing Ghostty..."
+                brew install --cask ghostty
+                echo "  ✓ Ghostty installed successfully"
+            else
+                echo "  ✓ Ghostty already installed"
+            fi
+            ;;
+        linux)
+            local distro=$(detect_distro)
+            if command -v ghostty &> /dev/null; then
+                echo "  ✓ Ghostty already installed"
+            else
+                case "$distro" in
+                    debian)
+                        # Ghostty on Debian/Ubuntu requires building from source or using a community repo
+                        # The community repo may not always be available, so we make this non-fatal
+                        echo "  ℹ️  Ghostty on Debian/Ubuntu requires manual installation"
+                        echo "     See: https://ghostty.org/docs/install/linux"
+                        ;;
+                    fedora)
+                        echo "  ℹ️  Ghostty on Fedora requires manual installation"
+                        echo "     See: https://ghostty.org/docs/install/linux"
+                        ;;
+                    arch)
+                        echo "  → Installing Ghostty from AUR..."
+                        if command -v yay &> /dev/null; then
+                            yay -S --noconfirm ghostty
+                            echo "  ✓ Ghostty installed successfully"
+                        elif command -v paru &> /dev/null; then
+                            paru -S --noconfirm ghostty
+                            echo "  ✓ Ghostty installed successfully"
+                        else
+                            echo "  ℹ️  Install an AUR helper (yay/paru) or build ghostty manually"
+                        fi
+                        ;;
+                    *)
+                        echo "  ℹ️  Ghostty installation not supported for this distro"
+                        echo "     See: https://ghostty.org/docs/install/linux"
+                        ;;
+                esac
+            fi
+            ;;
+    esac
+}
+
+install_ghostty
+
+# Setup Ghostty configuration
+setup_ghostty_config() {
+    local ghostty_config_dir="$HOME/.config/ghostty"
+    local ghostty_config_src="$SETUP_DIR/terminal/ghostty/config"
+
+    if [ -f "$ghostty_config_src" ]; then
+        mkdir -p "$ghostty_config_dir"
+        if [ -L "$ghostty_config_dir/config" ]; then
+            echo "  ✓ Ghostty config already linked"
+        elif [ -f "$ghostty_config_dir/config" ]; then
+            echo "  → Backing up existing Ghostty config..."
+            mv "$ghostty_config_dir/config" "$ghostty_config_dir/config.backup"
+            ln -s "$ghostty_config_src" "$ghostty_config_dir/config"
+            echo "  ✓ Ghostty config linked (backup saved)"
+        else
+            ln -s "$ghostty_config_src" "$ghostty_config_dir/config"
+            echo "  ✓ Ghostty config linked"
+        fi
+    fi
+}
+
+setup_ghostty_config
+
 echo ""
 echo "✓ Terminal environment setup complete!"
 echo ""

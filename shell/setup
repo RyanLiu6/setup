@@ -19,10 +19,19 @@ ensure_zsh
 echo "📝 Setting up shell configuration..."
 echo ""
 
-# Copy .zprofile
+# Symlink .zprofile
 if [[ -f "$SETUP_DIR/shell/.zprofile" ]]; then
-    cp "$SETUP_DIR/shell/.zprofile" ~/.zprofile
-    echo "  ✓ Copied .zprofile to home directory"
+    if [[ -L ~/.zprofile ]]; then
+        echo "  ✓ .zprofile already linked"
+    elif [[ -f ~/.zprofile ]]; then
+        echo "  → Backing up existing .zprofile..."
+        mv ~/.zprofile ~/.zprofile.backup
+        ln -s "$SETUP_DIR/shell/.zprofile" ~/.zprofile
+        echo "  ✓ .zprofile linked (backup saved)"
+    else
+        ln -s "$SETUP_DIR/shell/.zprofile" ~/.zprofile
+        echo "  ✓ .zprofile linked"
+    fi
 fi
 
 # Setup ~/.zshrc as a loader that sources our config

@@ -13,7 +13,12 @@ This directory contains direnv configuration for automatic Python environment ac
 Running `./setup` will:
 1. Install direnv via Homebrew (if not already installed)
 2. Create the direnv config directory (`~/.config/direnv`)
-3. Copy the direnv configuration to `~/.config/direnv/direnvrc`
+3. Symlink the direnv configuration:
+   ```
+   ~/.config/direnv/direnvrc → ~/dev/setup/direnv/direnvrc
+   ```
+
+Changes to `direnvrc` in this repo are immediately reflected.
 
 ## Usage
 

@@ -26,6 +26,11 @@ The setup also configures:
 
 Running `./setup` will:
 1. Verify Git is installed
-2. Copy `.gitignore_global` to `~/.gitignore_global`
+2. Symlink the global gitignore:
+   ```
+   ~/.gitignore_global → ~/dev/setup/git/.gitignore_global
+   ```
 3. Configure Git to use the global gitignore file
 4. Enable `push.autoSetupRemote` for easier branch pushing
+
+Changes to `.gitignore_global` in this repo are immediately reflected.
