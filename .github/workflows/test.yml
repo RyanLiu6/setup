@@ -194,6 +194,24 @@ jobs:
           exit 1
         fi
 
+        # Check fetch.prune
+        FETCH_PRUNE=$(git config --global fetch.prune)
+        if [ "$FETCH_PRUNE" = "true" ]; then
+          echo "✓ Git fetch.prune is enabled"
+        else
+          echo "✗ Git fetch.prune not enabled"
+          exit 1
+        fi
+
+        # Check alias.com
+        ALIAS_COM=$(git config --global alias.com)
+        if [ -n "$ALIAS_COM" ]; then
+          echo "✓ Git alias.com is configured"
+        else
+          echo "✗ Git alias.com not configured"
+          exit 1
+        fi
+
     - name: Verify zsh configuration is valid
       run: |
         echo "Validating zsh configuration..."
@@ -241,18 +259,104 @@ jobs:
 
         echo "✓ Setup script is idempotent (can be run multiple times)"
 
-    - name: Summary
-      if: success()
+  test-reset:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        path: setup-repo
+
+    - name: Set SETUP_DIR environment variable
+      run: echo "SETUP_DIR=$GITHUB_WORKSPACE/setup-repo" >> $GITHUB_ENV
+
+    - name: Install Homebrew (macOS only)
+      if: runner.os == 'macOS'
       run: |
-        echo ""
-        echo "========================================="
-        echo "✓ All tests passed on $RUNNER_OS!"
-        echo "========================================="
-        echo ""
-        echo "Verified:"
-        echo "  - All setup scripts run without errors"
-        echo "  - Configuration files are symlinked (direnv, git, ghostty)"
-        echo "  - All tools installed (uv, fnm, pnpm, starship, direnv, ghostty)"
-        echo "  - Git configuration is correct"
-        echo "  - ZSH configuration is valid"
-        echo "  - Setup is idempotent"
+        if ! command -v brew &> /dev/null; then
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        fi
+        # Handle both Intel and Apple Silicon
+        if [ -f /opt/homebrew/bin/brew ]; then
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [ -f /usr/local/bin/brew ]; then
+          eval "$(/usr/local/bin/brew shellenv)"
+        fi
+        echo "✓ Homebrew is available"
+
+    - name: Run initial setup
+      run: |
+        cd $SETUP_DIR
+        ./setup
+
+    - name: Run reset script
+      run: |
+        echo "Testing reset script..."
+        cd $SETUP_DIR
+
+        # Run reset (auto-confirm with yes)
+        echo "y" | ./reset
+
+    - name: Verify symlinks were recreated
+      run: |
+        echo "Verifying symlinks were recreated..."
+
+        if [ -L ~/.config/direnv/direnvrc ]; then
+          echo "✓ direnvrc symlink recreated"
+        else
+          echo "✗ direnvrc symlink not recreated"
+          exit 1
+        fi
+
+        if [ -L ~/.gitignore_global ]; then
+          echo "✓ .gitignore_global symlink recreated"
+        else
+          echo "✗ .gitignore_global symlink not recreated"
+          exit 1
+        fi
+
+        if [ -L ~/.config/ghostty/config ]; then
+          echo "✓ ghostty config symlink recreated"
+        else
+          echo "✗ ghostty config symlink not recreated"
+          exit 1
+        fi
+
+    - name: Verify git config was re-applied
+      run: |
+        echo "Verifying git configuration..."
+
+        if [ "$(git config --global core.excludesfile)" = "$HOME/.gitignore_global" ]; then
+          echo "✓ Git core.excludesfile re-configured"
+        else
+          echo "✗ Git core.excludesfile not re-configured"
+          exit 1
+        fi
+
+        if [ "$(git config --global push.autoSetupRemote)" = "true" ]; then
+          echo "✓ Git push.autoSetupRemote re-configured"
+        else
+          echo "✗ Git push.autoSetupRemote not re-configured"
+          exit 1
+        fi
+
+        if [ "$(git config --global fetch.prune)" = "true" ]; then
+          echo "✓ Git fetch.prune re-configured"
+        else
+          echo "✗ Git fetch.prune not re-configured"
+          exit 1
+        fi
+
+        if [ -n "$(git config --global alias.com)" ]; then
+          echo "✓ Git alias.com re-configured"
+        else
+          echo "✗ Git alias.com not re-configured"
+          exit 1
+        fi
+
+        echo "✓ Reset script works correctly"
