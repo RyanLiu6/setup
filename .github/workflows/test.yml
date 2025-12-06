@@ -259,7 +259,42 @@ jobs:
 
         echo "✓ Setup script is idempotent (can be run multiple times)"
 
-    - name: Test reset script
+  test-reset:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        path: setup-repo
+
+    - name: Set SETUP_DIR environment variable
+      run: echo "SETUP_DIR=$GITHUB_WORKSPACE/setup-repo" >> $GITHUB_ENV
+
+    - name: Install Homebrew (macOS only)
+      if: runner.os == 'macOS'
+      run: |
+        if ! command -v brew &> /dev/null; then
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        fi
+        # Handle both Intel and Apple Silicon
+        if [ -f /opt/homebrew/bin/brew ]; then
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [ -f /usr/local/bin/brew ]; then
+          eval "$(/usr/local/bin/brew shellenv)"
+        fi
+        echo "✓ Homebrew is available"
+
+    - name: Run initial setup
+      run: |
+        cd $SETUP_DIR
+        ./setup
+
+    - name: Run reset script
       run: |
         echo "Testing reset script..."
         cd $SETUP_DIR
@@ -267,7 +302,10 @@ jobs:
         # Run reset (auto-confirm with yes)
         echo "y" | ./reset
 
-        # Verify configs were recreated by checking symlinks exist
+    - name: Verify symlinks were recreated
+      run: |
+        echo "Verifying symlinks were recreated..."
+
         if [ -L ~/.config/direnv/direnvrc ]; then
           echo "✓ direnvrc symlink recreated"
         else
@@ -289,7 +327,24 @@ jobs:
           exit 1
         fi
 
-        # Verify git config was re-applied
+    - name: Verify git config was re-applied
+      run: |
+        echo "Verifying git configuration..."
+
+        if [ "$(git config --global core.excludesfile)" = "$HOME/.gitignore_global" ]; then
+          echo "✓ Git core.excludesfile re-configured"
+        else
+          echo "✗ Git core.excludesfile not re-configured"
+          exit 1
+        fi
+
+        if [ "$(git config --global push.autoSetupRemote)" = "true" ]; then
+          echo "✓ Git push.autoSetupRemote re-configured"
+        else
+          echo "✗ Git push.autoSetupRemote not re-configured"
+          exit 1
+        fi
+
         if [ "$(git config --global fetch.prune)" = "true" ]; then
           echo "✓ Git fetch.prune re-configured"
         else
@@ -305,20 +360,3 @@ jobs:
         fi
 
         echo "✓ Reset script works correctly"
-
-    - name: Summary
-      if: success()
-      run: |
-        echo ""
-        echo "========================================="
-        echo "✓ All tests passed on $RUNNER_OS!"
-        echo "========================================="
-        echo ""
-        echo "Verified:"
-        echo "  - All setup scripts run without errors"
-        echo "  - Configuration files are symlinked (direnv, git, ghostty)"
-        echo "  - All tools installed (uv, fnm, pnpm, starship, direnv, ghostty)"
-        echo "  - Git configuration is correct (excludesfile, autoSetupRemote, prune, alias.com)"
-        echo "  - ZSH configuration is valid"
-        echo "  - Setup is idempotent"
-        echo "  - Reset script tears down and rebuilds correctly"
