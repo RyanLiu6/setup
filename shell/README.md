@@ -82,9 +82,14 @@ _shellperf_tag "tagname" "After the operation"
 ### Configuration
 
 Running `./setup` will:
-1. Copy `.zprofile` to `~/.zprofile`
+1. Symlink `.zprofile`:
+   ```
+   ~/.zprofile → ~/dev/setup/shell/.zprofile
+   ```
 2. Create/update `~/.zshrc` to source our config (preserving any existing tool additions)
 3. Prompt you to set ZSH as your default shell (if not already)
+
+Changes to `.zprofile` in this repo are immediately reflected.
 
 To change your default shell to zsh:
 ```bash
