@@ -85,12 +85,7 @@ if ! command -v direnv &> /dev/null; then
             brew reinstall direnv
             ;;
         linux)
-            distro=$(detect_distro)
-            case "$distro" in
-                debian) sudo apt-get install -y --reinstall direnv ;;
-                fedora) sudo dnf reinstall -y direnv ;;
-                arch) sudo pacman -S --noconfirm direnv ;;
-            esac
+            sudo apt-get install -y --reinstall direnv
             ;;
     esac
     echo "  ✓ direnv reinstalled"
@@ -139,7 +134,7 @@ if [[ -f "$SETUP_DIR/terminal/ghostty/config" ]]; then
     echo "  ✓ Recreated Ghostty config symlink"
 fi
 
-# Reinstall Ghostty if missing (macOS only via brew)
+# Reinstall Ghostty if missing
 case "$OS" in
     macos)
         if ! brew list --cask ghostty &> /dev/null; then
@@ -151,18 +146,15 @@ case "$OS" in
         fi
         ;;
     linux)
-        local distro=$(detect_distro)
         if command -v ghostty &> /dev/null; then
             echo "  ✓ Ghostty is installed"
-        elif [[ "$distro" == "debian" ]]; then
+        else
             echo "  → Reinstalling Ghostty..."
             curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
             echo "deb https://debian.griffo.io/apt $(lsb_release -sc 2>/dev/null || echo stable) main" | sudo tee /etc/apt/sources.list.d/debian.griffo.io.list > /dev/null
             sudo apt-get update -qq
             sudo apt-get install -y ghostty
             echo "  ✓ Ghostty reinstalled"
-        else
-            echo "  ℹ️  Ghostty not installed (manual installation required)"
         fi
         ;;
 esac

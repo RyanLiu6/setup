@@ -112,7 +112,7 @@ This setup is tested and fully supported on:
 - **macOS** (Intel and Apple Silicon)
 - **Linux** (Debian/Ubuntu)
 
-Other Linux distributions (Fedora, Arch) may work but are not tested in CI.
+Other Linux distributions may work but are not officially supported.
 
 ### Requirements
 

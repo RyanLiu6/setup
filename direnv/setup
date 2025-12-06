@@ -21,24 +21,8 @@ if ! command -v direnv &> /dev/null; then
             brew install direnv
             ;;
         linux)
-            distro=$(detect_distro)
-            case "$distro" in
-                debian)
-                    sudo apt-get update -qq
-                    sudo apt-get install -y direnv
-                    ;;
-                fedora)
-                    sudo dnf install -y direnv
-                    ;;
-                arch)
-                    sudo pacman -S --noconfirm direnv
-                    ;;
-                *)
-                    # Fallback: use official binary installer
-                    echo "  → Using official installer..."
-                    curl -sfL https://direnv.net/install.sh | bash
-                    ;;
-            esac
+            sudo apt-get update -qq
+            sudo apt-get install -y direnv
             ;;
     esac
     echo "✓ direnv installed successfully"

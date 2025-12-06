@@ -65,7 +65,7 @@ Changes to the config in this repo are immediately reflected.
 
 On Debian/Ubuntu, Ghostty is installed automatically via the community repository at `debian.griffo.io`.
 
-Other distributions (Fedora, Arch) require manual installation - see [Ghostty docs](https://ghostty.org/docs/install/linux).
+Other Linux distributions are not officially supported - see [Ghostty docs](https://ghostty.org/docs/install/linux) for manual installation.
 
 ## iTerm2 (macOS Only)
 
