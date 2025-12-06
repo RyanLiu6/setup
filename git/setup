@@ -36,6 +36,12 @@ echo "  ✓ Configured git to use global gitignore"
 git config --global push.autoSetupRemote true
 echo "  ✓ Configured git push to auto-setup remote tracking"
 
+git config --global fetch.prune true
+echo "  ✓ Configured git fetch/pull to auto-prune deleted remote branches"
+
+git config --global alias.com '!git checkout main 2>/dev/null || git checkout master'
+echo "  ✓ Added 'git com' alias to checkout main/master"
+
 echo ""
 echo "✓ Git configuration complete!"
 echo ""
