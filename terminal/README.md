@@ -61,11 +61,11 @@ The config is symlinked from this repo:
 
 Changes to the config in this repo are immediately reflected.
 
-### Linux Installation Notes
+### Linux Installation
 
-- **Debian/Ubuntu**: Uses community repository from `debian.griffo.io`
-- **Arch**: Installs from AUR (requires yay or paru)
-- **Fedora**: Manual installation required ([see docs](https://ghostty.org/docs/install/linux))
+On Debian/Ubuntu, Ghostty is installed automatically via the community repository at `debian.griffo.io`.
+
+Other distributions (Fedora, Arch) require manual installation - see [Ghostty docs](https://ghostty.org/docs/install/linux).
 
 ## iTerm2 (macOS Only)
 

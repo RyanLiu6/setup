@@ -154,7 +154,7 @@ jobs:
           exit 1
         fi
 
-        # Check Ghostty (macOS only - installed via Homebrew cask)
+        # Check Ghostty
         if [ "$RUNNER_OS" = "macOS" ]; then
           if brew list --cask ghostty &> /dev/null; then
             echo "✓ Ghostty is installed"
@@ -163,7 +163,13 @@ jobs:
             exit 1
           fi
         else
-          echo "ℹ️  Skipping Ghostty check on Linux (optional installation)"
+          # Linux (Debian/Ubuntu)
+          if command -v ghostty &> /dev/null; then
+            echo "✓ Ghostty is installed"
+          else
+            echo "✗ Ghostty not installed"
+            exit 1
+          fi
         fi
 
     - name: Verify git configuration

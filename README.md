@@ -105,15 +105,23 @@ cd $SETUP_DIR
 - Custom terminal prompt with git status
 - Docker container status in prompt
 
-## Requirements
+## Supported Platforms
 
-### macOS
+This setup is tested and fully supported on:
+
+- **macOS** (Intel and Apple Silicon)
+- **Linux** (Debian/Ubuntu)
+
+Other Linux distributions (Fedora, Arch) may work but are not tested in CI.
+
+### Requirements
+
+**macOS:**
 - Homebrew (installed automatically if missing)
 - Git
 - Zsh (default on macOS)
 
-### Linux
-- Debian/Ubuntu, Fedora/RHEL, or Arch-based distributions
+**Linux (Debian/Ubuntu):**
 - Git
 - Zsh (installed automatically if missing)
 - sudo access for package installation
