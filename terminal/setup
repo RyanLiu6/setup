@@ -144,19 +144,10 @@ install_ghostty() {
             else
                 case "$distro" in
                     debian)
-                        # Use community Debian repository (https://ghostty.org/docs/install/binary#linux-(official))
-                        echo "  → Setting up Ghostty Debian repository..."
-                        sudo apt-get update -qq
-                        sudo apt-get install -y curl gpg
-                        curl -fsSL https://debian.griffo.io/signing-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/ghostty-archive-keyring.gpg 2>/dev/null || true
-                        echo "deb [signed-by=/usr/share/keyrings/ghostty-archive-keyring.gpg] https://debian.griffo.io/ stable main" | sudo tee /etc/apt/sources.list.d/ghostty.list > /dev/null
-                        sudo apt-get update -qq
-                        if sudo apt-get install -y ghostty 2>/dev/null; then
-                            echo "  ✓ Ghostty installed successfully"
-                        else
-                            echo "  ℹ️  Ghostty installation failed (may need to build from source)"
-                            echo "     See: https://ghostty.org/docs/install/build"
-                        fi
+                        # Ghostty on Debian/Ubuntu requires building from source or using a community repo
+                        # The community repo may not always be available, so we make this non-fatal
+                        echo "  ℹ️  Ghostty on Debian/Ubuntu requires manual installation"
+                        echo "     See: https://ghostty.org/docs/install/linux"
                         ;;
                     fedora)
                         echo "  ℹ️  Ghostty on Fedora requires manual installation"
