@@ -115,13 +115,24 @@ install_ghostty() {
             if command -v ghostty &> /dev/null; then
                 echo "  ✓ Ghostty already installed"
             else
-                # Use community Debian repository (https://debian.griffo.io/)
-                echo "  → Setting up Ghostty Debian repository..."
-                curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
-                echo "deb https://debian.griffo.io/apt $(lsb_release -sc 2>/dev/null || echo stable) main" | sudo tee /etc/apt/sources.list.d/debian.griffo.io.list > /dev/null
-                sudo apt-get update -qq
-                sudo apt-get install -y ghostty
-                echo "  ✓ Ghostty installed successfully"
+                # Detect if Ubuntu or Debian
+                if [[ -f /etc/os-release ]]; then
+                    . /etc/os-release
+                    if [[ "$ID" == "ubuntu" ]] || [[ "$ID_LIKE" == *"ubuntu"* ]]; then
+                        # Ubuntu: use community ghostty-ubuntu installer
+                        echo "  → Installing Ghostty via ghostty-ubuntu..."
+                        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
+                        echo "  ✓ Ghostty installed successfully"
+                    else
+                        # Debian: use debian.griffo.io repository
+                        echo "  → Setting up Ghostty Debian repository..."
+                        curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
+                        echo "deb https://debian.griffo.io/apt $(lsb_release -sc 2>/dev/null || echo stable) main" | sudo tee /etc/apt/sources.list.d/debian.griffo.io.list > /dev/null
+                        sudo apt-get update -qq
+                        sudo apt-get install -y ghostty
+                        echo "  ✓ Ghostty installed successfully"
+                    fi
+                fi
             fi
             ;;
     esac
