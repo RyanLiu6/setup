@@ -113,3 +113,8 @@ if [[ "$OSTYPE" == darwin* ]]; then
     export DATA_DIRECTORY=/Volumes/Data
     export OLLAMA_MODELS=/Volumes/Data/.ollama/models
 fi
+
+# Ghostty terminfo (required for SSH sessions since Ghostty sets TERMINFO only in its own shell)
+if [[ -d /Applications/Ghostty.app/Contents/Resources/terminfo ]]; then
+    export TERMINFO=/Applications/Ghostty.app/Contents/Resources/terminfo
+fi
