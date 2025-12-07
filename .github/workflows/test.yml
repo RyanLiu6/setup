@@ -228,10 +228,11 @@ jobs:
 
         # Check autoSetupRemote (from shared config)
         AUTO_SETUP=$(git config --global push.autosetupremote)
+        echo "DEBUG: AUTO_SETUP value is: '$AUTO_SETUP'"
         if [ "$AUTO_SETUP" = "true" ]; then
           echo "✓ Git push.autoSetupRemote is enabled"
         else
-          echo "✗ Git push.autoSetupRemote not enabled"
+          echo "✗ Git push.autoSetupRemote not enabled (got: '$AUTO_SETUP')"
           exit 1
         fi
 
