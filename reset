@@ -65,9 +65,9 @@ if [[ -e ~/.gitignore_global ]]; then
 fi
 echo "  → Resetting git global config..."
 git config --global --unset core.excludesfile 2>/dev/null || true
-git config --global --unset push.autoSetupRemote 2>/dev/null || true
-git config --global --unset fetch.prune 2>/dev/null || true
-git config --global --unset alias.com 2>/dev/null || true
+git config --global --unset include.path 2>/dev/null || true
+# Note: Other git settings (push.autoSetupRemote, fetch.prune, aliases)
+# are now managed in .gitconfig.shared, so removing include.path will remove them
 
 # Ghostty (entire directory is symlinked)
 if [[ -L ~/.config/ghostty ]]; then

@@ -30,17 +30,10 @@ else
     echo "  ✓ .gitignore_global linked"
 fi
 
-git config --global core.excludesfile ~/.gitignore_global
-echo "  ✓ Configured git to use global gitignore"
-
-git config --global push.autoSetupRemote true
-echo "  ✓ Configured git push to auto-setup remote tracking"
-
-git config --global fetch.prune true
-echo "  ✓ Configured git fetch/pull to auto-prune deleted remote branches"
-
-git config --global alias.com '!git checkout main 2>/dev/null || git checkout master'
-echo "  ✓ Added 'git com' alias to checkout main/master"
+# Configure git to use shared configuration
+git config --global include.path "~/dev/setup/git/.gitconfig.shared"
+echo "  ✓ Configured git to include shared configuration"
+echo "  ✓ Shared config includes: aliases, push/fetch/merge settings, URL rewrites"
 
 echo ""
 echo "✓ Git configuration complete!"

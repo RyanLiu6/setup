@@ -87,6 +87,14 @@ jobs:
           exit 1
         fi
 
+        # Check git shared config exists
+        if [ -f "$SETUP_DIR/git/.gitconfig.shared" ]; then
+          echo "✓ git/.gitconfig.shared exists"
+        else
+          echo "✗ git/.gitconfig.shared not found"
+          exit 1
+        fi
+
         # Check Ghostty config directory (entire directory is symlinked)
         if [ -L ~/.config/ghostty ]; then
           echo "✓ ~/.config/ghostty directory linked"
@@ -200,7 +208,16 @@ jobs:
       run: |
         echo "Checking git configuration..."
 
-        # Check global gitignore is configured
+        # Check that shared config include path is set
+        INCLUDE_PATH=$(git config --global include.path)
+        if echo "$INCLUDE_PATH" | grep -q ".gitconfig.shared"; then
+          echo "✓ Git include.path is configured for shared config"
+        else
+          echo "✗ Git include.path not configured (got: $INCLUDE_PATH)"
+          exit 1
+        fi
+
+        # Check global gitignore is configured (from shared config)
         GITIGNORE_PATH=$(git config --global core.excludesfile)
         if [ "$GITIGNORE_PATH" = "$HOME/.gitignore_global" ]; then
           echo "✓ Git global gitignore is configured correctly"
@@ -209,7 +226,7 @@ jobs:
           exit 1
         fi
 
-        # Check autoSetupRemote
+        # Check autoSetupRemote (from shared config)
         AUTO_SETUP=$(git config --global push.autoSetupRemote)
         if [ "$AUTO_SETUP" = "true" ]; then
           echo "✓ Git push.autoSetupRemote is enabled"
@@ -218,7 +235,7 @@ jobs:
           exit 1
         fi
 
-        # Check fetch.prune
+        # Check fetch.prune (from shared config)
         FETCH_PRUNE=$(git config --global fetch.prune)
         if [ "$FETCH_PRUNE" = "true" ]; then
           echo "✓ Git fetch.prune is enabled"
@@ -227,12 +244,21 @@ jobs:
           exit 1
         fi
 
-        # Check alias.com
+        # Check alias.com (from shared config)
         ALIAS_COM=$(git config --global alias.com)
         if [ -n "$ALIAS_COM" ]; then
           echo "✓ Git alias.com is configured"
         else
           echo "✗ Git alias.com not configured"
+          exit 1
+        fi
+
+        # Check alias.prune-branches (from shared config)
+        ALIAS_PRUNE=$(git config --global alias.prune-branches)
+        if [ -n "$ALIAS_PRUNE" ]; then
+          echo "✓ Git alias.prune-branches is configured"
+        else
+          echo "✗ Git alias.prune-branches not configured"
           exit 1
         fi
 
@@ -377,6 +403,15 @@ jobs:
       run: |
         echo "Verifying git configuration..."
 
+        # Check that shared config include path is set
+        INCLUDE_PATH=$(git config --global include.path)
+        if echo "$INCLUDE_PATH" | grep -q ".gitconfig.shared"; then
+          echo "✓ Git include.path re-configured for shared config"
+        else
+          echo "✗ Git include.path not re-configured (got: $INCLUDE_PATH)"
+          exit 1
+        fi
+
         if [ "$(git config --global core.excludesfile)" = "$HOME/.gitignore_global" ]; then
           echo "✓ Git core.excludesfile re-configured"
         else
@@ -402,6 +437,13 @@ jobs:
           echo "✓ Git alias.com re-configured"
         else
           echo "✗ Git alias.com not re-configured"
+          exit 1
+        fi
+
+        if [ -n "$(git config --global alias.prune-branches)" ]; then
+          echo "✓ Git alias.prune-branches re-configured"
+        else
+          echo "✗ Git alias.prune-branches not re-configured"
           exit 1
         fi
 

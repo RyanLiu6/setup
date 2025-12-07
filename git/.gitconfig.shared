@@ -1,0 +1,38 @@
+# Shared Git Configuration
+# This file contains universal git settings that should be consistent across all machines.
+# Include this in your ~/.gitconfig with:
+#   [include]
+#       path = ~/dev/setup/git/.gitconfig.shared
+
+[core]
+    whitespace = trailing-space,space-before-tab
+    excludesfile = ~/.gitignore_global
+
+[mergetool]
+    keepBackup = false
+
+[diff]
+    mnemonicprefix = true
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[merge]
+    stat = true
+
+[fetch]
+    prune = true
+
+[feature]
+    manyFiles = 1
+
+[url "git@github.com:"]
+    insteadOf = https://github.com/
+
+[alias]
+    # Checkout main or master branch
+    com = !git checkout main 2>/dev/null || git checkout master
+
+    # Prune local branches that have been deleted on remote
+    prune-branches = !git for-each-ref --format=\"%(refname:short) %(upstream:track)\" refs/heads | awk \"\\$2 == \\\"[gone]\\\" {print \\$1}\" | xargs -r git branch -D
