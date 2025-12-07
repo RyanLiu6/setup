@@ -131,7 +131,7 @@ Other Linux distributions may work but are not officially supported.
 Each component can be customized by editing its configuration:
 
 - Shell: `shell/.zsh/*.zsh`
-- Terminal: `terminal/starship.toml`, `terminal/ghostty/config`
+- Terminal: `terminal/starship.toml`, `terminal/ghostty/` (entire directory symlinked)
 - Python: `direnv/direnvrc`
 - Git: `git/.gitignore_global`
 

@@ -141,27 +141,55 @@ install_ghostty() {
 install_ghostty
 
 # Setup Ghostty configuration
+# We symlink the entire ghostty directory so that relative paths in config
+# (like config-file = colours/eva01) resolve correctly
 setup_ghostty_config() {
     local ghostty_config_dir="$HOME/.config/ghostty"
-    local ghostty_config_src="$SETUP_DIR/terminal/ghostty/config"
+    local ghostty_src_dir="$SETUP_DIR/terminal/ghostty"
 
-    if [ -f "$ghostty_config_src" ]; then
-        mkdir -p "$ghostty_config_dir"
-        if [ -L "$ghostty_config_dir/config" ]; then
-            echo "  ✓ Ghostty config already linked"
-        elif [ -f "$ghostty_config_dir/config" ]; then
-            echo "  → Backing up existing Ghostty config..."
-            mv "$ghostty_config_dir/config" "$ghostty_config_dir/config.backup"
-            ln -s "$ghostty_config_src" "$ghostty_config_dir/config"
-            echo "  ✓ Ghostty config linked (backup saved)"
+    if [ -d "$ghostty_src_dir" ]; then
+        # Ensure parent .config directory exists
+        mkdir -p "$HOME/.config"
+
+        if [ -L "$ghostty_config_dir" ]; then
+            echo "  ✓ Ghostty config directory already linked"
+        elif [ -d "$ghostty_config_dir" ]; then
+            echo "  → Backing up existing Ghostty config directory..."
+            mv "$ghostty_config_dir" "$ghostty_config_dir.backup"
+            ln -s "$ghostty_src_dir" "$ghostty_config_dir"
+            echo "  ✓ Ghostty config directory linked (backup saved)"
         else
-            ln -s "$ghostty_config_src" "$ghostty_config_dir/config"
-            echo "  ✓ Ghostty config linked"
+            ln -s "$ghostty_src_dir" "$ghostty_config_dir"
+            echo "  ✓ Ghostty config directory linked"
         fi
     fi
 }
 
 setup_ghostty_config
+
+# Setup Starship configuration
+setup_starship_config() {
+    local starship_config="$HOME/.config/starship.toml"
+    local starship_src="$SETUP_DIR/terminal/starship.toml"
+
+    if [ -f "$starship_src" ]; then
+        mkdir -p "$HOME/.config"
+
+        if [ -L "$starship_config" ]; then
+            echo "  ✓ Starship config already linked"
+        elif [ -f "$starship_config" ]; then
+            echo "  → Backing up existing Starship config..."
+            mv "$starship_config" "$starship_config.backup"
+            ln -s "$starship_src" "$starship_config"
+            echo "  ✓ Starship config linked (backup saved)"
+        else
+            ln -s "$starship_src" "$starship_config"
+            echo "  ✓ Starship config linked"
+        fi
+    fi
+}
+
+setup_starship_config
 
 echo ""
 echo "✓ Terminal environment setup complete!"
