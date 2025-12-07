@@ -47,3 +47,12 @@ keybind = alt+backspace=esc:0x7f
 
 # Delete to line start: Cmd+Backspace
 keybind = cmd+backspace=text:\x15
+
+# Modified keys for CLI tools (Claude Code, etc.)
+# These send CSI u (fixterms) sequences that modern CLI tools recognize
+keybind = shift+enter=text:\x1b[13;2u
+keybind = ctrl+enter=text:\x1b[13;5u
+keybind = ctrl+shift+enter=text:\x1b[13;6u
+
+# Ctrl+Backspace: Delete word backward (alternative to Alt+Backspace)
+keybind = ctrl+backspace=esc:0x7f

@@ -69,14 +69,20 @@ git config --global --unset push.autoSetupRemote 2>/dev/null || true
 git config --global --unset fetch.prune 2>/dev/null || true
 git config --global --unset alias.com 2>/dev/null || true
 
-# Ghostty
-if [[ -e ~/.config/ghostty/config ]]; then
-    echo "  → Removing ~/.config/ghostty/config..."
-    rm -f ~/.config/ghostty/config
+# Ghostty (entire directory is symlinked)
+if [[ -L ~/.config/ghostty ]]; then
+    echo "  → Removing ~/.config/ghostty symlink..."
+    rm -f ~/.config/ghostty
+elif [[ -d ~/.config/ghostty ]]; then
+    echo "  → Removing ~/.config/ghostty directory..."
+    rm -rf ~/.config/ghostty
 fi
 
 # Starship
-if [[ -e ~/.config/starship.toml ]]; then
+if [[ -L ~/.config/starship.toml ]]; then
+    echo "  → Removing ~/.config/starship.toml symlink..."
+    rm -f ~/.config/starship.toml
+elif [[ -f ~/.config/starship.toml ]]; then
     echo "  → Removing ~/.config/starship.toml..."
     rm -f ~/.config/starship.toml
 fi

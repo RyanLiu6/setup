@@ -16,7 +16,7 @@ Cross-platform ZSH shell configuration for macOS and Linux.
 
 - `.zprofile`: Environment setup loaded at login (Homebrew init on macOS)
 - `.zshrc`: Main shell configuration (sourced by ~/.zshrc)
-- `.zshrc.loader`: Template for ~/.zshrc loader
+- `.zshrc.loader`: Template for ~/.zshrc loader (includes Ghostty shell integration)
 - `.zsh/`: Directory containing modular shell configurations
   - `base.zsh`: Core shell settings, tool PATH setup (uv, pnpm, fnm), and performance optimizations
   - `aliases.zsh`: Command aliases and helper functions (platform-aware)
@@ -35,8 +35,10 @@ Cross-platform ZSH shell configuration for macOS and Linux.
 ### Built-in Commands
 
 **Shell Management:**
-- `reload` - Restart your terminal session
+- `reload` - Restart your terminal session (`exec zsh`)
 - `shellperf` - Measure shell startup time with detailed breakdown
+
+> **Note:** The `reload` alias uses `exec zsh` to replace the shell process entirely. Ghostty shell integration is manually sourced in `.zshrc.loader` to ensure it reinitializes after reload.
 
 **Docker:**
 - `dps` - Enhanced docker ps with formatted output
