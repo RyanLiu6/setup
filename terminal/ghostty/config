@@ -20,6 +20,8 @@ cursor-style-blink = false
 
 # Shell integration
 shell-integration = zsh
+# SSH: copy terminfo to remote on first connect, fallback to xterm-256color if that fails
+shell-integration-features = ssh-terminfo,ssh-env
 
 # macOS specific
 # Option key behaves as Alt (for word movement shortcuts)
