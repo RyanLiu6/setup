@@ -210,6 +210,12 @@ jobs:
 
         # Check that shared config include path is set
         INCLUDE_PATH=$(git config --global include.path)
+        echo "DEBUG: INCLUDE_PATH is: '$INCLUDE_PATH'"
+        echo "DEBUG: File exists check:"
+        ls -la "$INCLUDE_PATH" || echo "File not found"
+        echo "DEBUG: Git sees these settings from shared config:"
+        git config --list --show-origin | grep "gitconfig.shared" || echo "No settings from shared config"
+
         if echo "$INCLUDE_PATH" | grep -q ".gitconfig.shared"; then
           echo "✓ Git include.path is configured for shared config"
         else
