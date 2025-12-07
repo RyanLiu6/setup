@@ -29,9 +29,9 @@ macos-option-as-alt = true
 # Tab cycling - standard macOS style (same as Chrome, Safari, etc.)
 keybind = cmd+shift+left_bracket=previous_tab
 keybind = cmd+shift+right_bracket=next_tab
-# Unbind arrow-based tab cycling to retrain muscle memory
-keybind = cmd+shift+left=unbind
-keybind = cmd+shift+right=unbind
+# Disable arrow-based tab cycling completely
+keybind = cmd+shift+left=ignore
+keybind = cmd+shift+right=ignore
 
 # Word movement: Option+Arrow (works with macos-option-as-alt=true)
 # These send escape sequences that zsh/bash interpret as word movement
@@ -48,11 +48,11 @@ keybind = alt+backspace=esc:0x7f
 # Delete to line start: Cmd+Backspace
 keybind = cmd+backspace=text:\x15
 
-# Modified keys for CLI tools (Claude Code, etc.)
-# These send CSI u (fixterms) sequences that modern CLI tools recognize
-keybind = shift+enter=text:\x1b[13;2u
-keybind = ctrl+enter=text:\x1b[13;5u
-keybind = ctrl+shift+enter=text:\x1b[13;6u
-
 # Ctrl+Backspace: Delete word backward (alternative to Alt+Backspace)
 keybind = ctrl+backspace=esc:0x7f
+
+# Shift+Enter: Send ESC+CR (legacy sequence) for compatibility with Claude Code and similar apps.
+# Ghostty's default "fixterms" protocol sends [27;2;13~ which most apps don't recognize.
+# This override sends \x1b\r which is what iTerm2 sends and apps expect.
+# See: https://github.com/ghostty-org/ghostty/issues/1850
+keybind = shift+enter=text:\x1b\r

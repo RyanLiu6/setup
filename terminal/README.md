@@ -74,7 +74,14 @@ This ensures relative paths in the config (like `config-file = colours/eva01`) r
 | `Cmd+Backspace` | Delete to line start |
 | `Ctrl+Backspace` | Delete word backward (alternative) |
 | `Shift+Enter` | Newline without executing (for Claude Code, etc.) |
-| `Ctrl+Enter` | Alternative modifier key |
+
+#### Shift+Enter Compatibility
+
+Ghostty uses a modern keyboard protocol ("fixterms") that sends disambiguated key sequences. However, most applications (including Claude Code) expect legacy escape sequences. By default, Shift+Enter sends `[27;2;13~` which apps don't recognize.
+
+The config explicitly binds Shift+Enter to send `\x1b\r` (ESC + carriage return), matching iTerm2's behavior. This is harmless in regular shells (acts like Enter) and enables proper newline insertion in apps like Claude Code.
+
+See [ghostty-org/ghostty#1850](https://github.com/ghostty-org/ghostty/issues/1850) for details.
 
 ### Shell Integration
 
