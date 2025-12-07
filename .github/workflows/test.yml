@@ -230,7 +230,7 @@ jobs:
 
         # Debug: Show what git actually sees
         echo "DEBUG: Git config values:"
-        git config --list --show-origin | grep -E "(push.autoSetupRemote|fetch.prune|alias)" || echo "No matching values found"
+        git config --list --show-origin | grep -E "(push|fetch|alias)" || echo "No matching values found"
 
         # Check global gitignore is configured (from shared config)
         GITIGNORE_PATH=$(git config --global core.excludesfile)
