@@ -69,3 +69,24 @@ Running `./setup` will:
    ```
 
 Changes to `.gitignore_global` or `.gitconfig.shared` in this repo are immediately reflected across all Git operations.
+
+## Technical Notes
+
+### Reading Git Config Values
+
+When verifying git configuration, note the difference between `git config --global` and `git config`:
+
+- `git config --global <key>` - Reads **only** from `~/.gitconfig` (does not include files)
+- `git config <key>` - Reads from **all sources** including `~/.gitconfig`, included files like `.gitconfig.shared`, local repo config, and system config
+
+**For testing/verification:**
+```bash
+# Check include.path is set in global config
+git config --global include.path  # Returns: ~/dev/setup/git/.gitconfig.shared
+
+# Check settings from shared config (must omit --global to read included files)
+git config push.autosetupremote   # Returns: true (from .gitconfig.shared)
+git config alias.prune-branches   # Returns: <alias definition>
+```
+
+This is why CI tests use `git config` without `--global` when verifying settings from `.gitconfig.shared` - it tests what users actually experience when running git commands.
