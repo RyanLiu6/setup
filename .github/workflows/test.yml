@@ -210,12 +210,6 @@ jobs:
 
         # Check that shared config include path is set
         INCLUDE_PATH=$(git config --global include.path)
-        echo "DEBUG: INCLUDE_PATH is: '$INCLUDE_PATH'"
-        echo "DEBUG: File exists check:"
-        ls -la "$INCLUDE_PATH" || echo "File not found"
-        echo "DEBUG: Git sees these settings from shared config:"
-        git config --list --show-origin | grep "gitconfig.shared" || echo "No settings from shared config"
-
         if echo "$INCLUDE_PATH" | grep -q ".gitconfig.shared"; then
           echo "✓ Git include.path is configured for shared config"
         else
@@ -233,8 +227,8 @@ jobs:
         fi
 
         # Check autoSetupRemote (from shared config)
-        AUTO_SETUP=$(git config --global push.autosetupremote || echo "")
-        echo "DEBUG: AUTO_SETUP value is: '$AUTO_SETUP'"
+        # Note: Use 'git config' without --global to read from included files
+        AUTO_SETUP=$(git config push.autosetupremote || echo "")
         if [ "$AUTO_SETUP" = "true" ]; then
           echo "✓ Git push.autoSetupRemote is enabled"
         else
@@ -243,7 +237,7 @@ jobs:
         fi
 
         # Check fetch.prune (from shared config)
-        FETCH_PRUNE=$(git config --global fetch.prune)
+        FETCH_PRUNE=$(git config fetch.prune || echo "")
         if [ "$FETCH_PRUNE" = "true" ]; then
           echo "✓ Git fetch.prune is enabled"
         else
@@ -252,7 +246,7 @@ jobs:
         fi
 
         # Check alias.com (from shared config)
-        ALIAS_COM=$(git config --global alias.com)
+        ALIAS_COM=$(git config alias.com || echo "")
         if [ -n "$ALIAS_COM" ]; then
           echo "✓ Git alias.com is configured"
         else
@@ -261,7 +255,7 @@ jobs:
         fi
 
         # Check alias.prune-branches (from shared config)
-        ALIAS_PRUNE=$(git config --global alias.prune-branches)
+        ALIAS_PRUNE=$(git config alias.prune-branches || echo "")
         if [ -n "$ALIAS_PRUNE" ]; then
           echo "✓ Git alias.prune-branches is configured"
         else
@@ -426,28 +420,28 @@ jobs:
           exit 1
         fi
 
-        if [ "$(git config --global push.autosetupremote)" = "true" ]; then
+        if [ "$(git config push.autosetupremote)" = "true" ]; then
           echo "✓ Git push.autoSetupRemote re-configured"
         else
           echo "✗ Git push.autoSetupRemote not re-configured"
           exit 1
         fi
 
-        if [ "$(git config --global fetch.prune)" = "true" ]; then
+        if [ "$(git config fetch.prune)" = "true" ]; then
           echo "✓ Git fetch.prune re-configured"
         else
           echo "✗ Git fetch.prune not re-configured"
           exit 1
         fi
 
-        if [ -n "$(git config --global alias.com)" ]; then
+        if [ -n "$(git config alias.com)" ]; then
           echo "✓ Git alias.com re-configured"
         else
           echo "✗ Git alias.com not re-configured"
           exit 1
         fi
 
-        if [ -n "$(git config --global alias.prune-branches)" ]; then
+        if [ -n "$(git config alias.prune-branches)" ]; then
           echo "✓ Git alias.prune-branches re-configured"
         else
           echo "✗ Git alias.prune-branches not re-configured"
