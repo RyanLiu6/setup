@@ -35,6 +35,10 @@ git config --global include.path "~/dev/setup/git/.gitconfig.shared"
 echo "  ✓ Configured git to include shared configuration"
 echo "  ✓ Shared config includes: aliases, push/fetch/merge settings, URL rewrites"
 
+# Configure core.excludesfile (must be in main config, not shared, due to path resolution)
+git config --global core.excludesfile ~/.gitignore_global
+echo "  ✓ Configured git to use global gitignore"
+
 echo ""
 echo "✓ Git configuration complete!"
 echo ""
