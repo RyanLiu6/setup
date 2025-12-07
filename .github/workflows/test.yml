@@ -217,21 +217,6 @@ jobs:
           exit 1
         fi
 
-        # Debug: Check if the shared config file exists at the path
-        echo "DEBUG: Include path is: $INCLUDE_PATH"
-        if [ -f "$INCLUDE_PATH" ]; then
-          echo "DEBUG: Shared config file exists"
-          echo "DEBUG: First 10 lines of shared config:"
-          head -10 "$INCLUDE_PATH"
-        else
-          echo "DEBUG: Shared config file NOT found at $INCLUDE_PATH"
-          ls -la "$SETUP_DIR/git/" || true
-        fi
-
-        # Debug: Show what git actually sees
-        echo "DEBUG: Git config values:"
-        git config --list --show-origin | grep -E "(push|fetch|alias)" || echo "No matching values found"
-
         # Check global gitignore is configured (from shared config)
         GITIGNORE_PATH=$(git config --global core.excludesfile)
         if [ "$GITIGNORE_PATH" = "$HOME/.gitignore_global" ]; then
@@ -242,7 +227,7 @@ jobs:
         fi
 
         # Check autoSetupRemote (from shared config)
-        AUTO_SETUP=$(git config --global push.autoSetupRemote)
+        AUTO_SETUP=$(git config --global push.autosetupremote)
         if [ "$AUTO_SETUP" = "true" ]; then
           echo "✓ Git push.autoSetupRemote is enabled"
         else
@@ -434,7 +419,7 @@ jobs:
           exit 1
         fi
 
-        if [ "$(git config --global push.autoSetupRemote)" = "true" ]; then
+        if [ "$(git config --global push.autosetupremote)" = "true" ]; then
           echo "✓ Git push.autoSetupRemote re-configured"
         else
           echo "✗ Git push.autoSetupRemote not re-configured"
