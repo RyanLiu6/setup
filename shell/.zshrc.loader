@@ -6,6 +6,12 @@
 zmodload zsh/datetime
 typeset -g _ZSHRC_START_TIME=$EPOCHREALTIME
 
+# Ghostty shell integration (must be near top of zshrc)
+# This ensures shell integration works after exec zsh / reload
+if [[ -n "${GHOSTTY_RESOURCES_DIR}" ]]; then
+    source "${GHOSTTY_RESOURCES_DIR}/shell-integration/zsh/ghostty-integration"
+fi
+
 # Source main configuration
 source __SETUP_DIR__/shell/.zshrc
 

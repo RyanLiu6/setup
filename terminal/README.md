@@ -4,8 +4,9 @@ Cross-platform terminal configuration and tools setup for macOS and Linux.
 
 ## Contents
 
-- `ghostty/`: Ghostty terminal emulator configuration
-  - `config`: Ghostty configuration with Eva01-inspired color scheme
+- `ghostty/`: Ghostty terminal emulator configuration (entire directory symlinked to `~/.config/ghostty/`)
+  - `config`: Ghostty configuration with keybindings and settings
+  - `colours/`: Color schemes (eva01, eva02)
 - `iterm2/`: iTerm2 configuration (macOS)
   - `colours/`: Color schemes (`*.itermcolors`)
   - `Custom.json`: Custom iTerm2 profile
@@ -40,26 +41,47 @@ PATH configuration for these tools is handled in `shell/.zsh/base.zsh`.
 Running `./setup` will:
 1. Detect your platform (macOS or Linux)
 2. Install all required tools using the appropriate method
-3. Symlink Ghostty configuration to `~/.config/ghostty/config`
-4. Provide status feedback for each installation
+3. Symlink Ghostty directory to `~/.config/ghostty/`
+4. Symlink Starship config to `~/.config/starship.toml`
+5. Provide status feedback for each installation
 
 ## Ghostty Terminal
 
 [Ghostty](https://ghostty.org) is a modern, GPU-accelerated terminal emulator. The configuration includes:
 
 - **Font**: FiraCode Nerd Font Mono @ 12pt
-- **Color scheme**: Eva01-inspired dark theme with purple/green accents
+- **Color scheme**: Eva01-inspired dark theme with purple/green accents (switchable to eva02)
 - **Cursor**: Non-blinking block cursor
 - **Scrollback**: 1000 lines
 
 ### Configuration Location
 
-The config is symlinked from this repo:
+The entire Ghostty directory is symlinked from this repo:
 ```
-~/.config/ghostty/config → ~/dev/setup/terminal/ghostty/config
+~/.config/ghostty/ → ~/dev/setup/terminal/ghostty/
 ```
 
-Changes to the config in this repo are immediately reflected.
+This ensures relative paths in the config (like `config-file = colours/eva01`) resolve correctly. Changes to the config in this repo are immediately reflected.
+
+### Keybindings
+
+| Keybinding | Action |
+|------------|--------|
+| `Cmd+Shift+[` / `]` | Previous/next tab |
+| `Alt+Left` / `Right` | Word movement |
+| `Cmd+Left` / `Right` | Line start/end |
+| `Alt+Backspace` | Delete word backward |
+| `Cmd+Backspace` | Delete to line start |
+| `Ctrl+Backspace` | Delete word backward (alternative) |
+| `Shift+Enter` | Newline without executing (for Claude Code, etc.) |
+| `Ctrl+Enter` | Alternative modifier key |
+
+### Shell Integration
+
+Ghostty shell integration is manually sourced in the zsh loader (`.zshrc.loader`) to ensure it works after `exec zsh` (the `reload` alias). This enables:
+- Proper tab title updates
+- No false "running process" warnings when closing tabs
+- Working directory tracking
 
 ### Linux Installation
 
@@ -91,7 +113,7 @@ The custom Starship prompt is configured in `starship.toml`. It includes:
 - Docker container status
 - Language version indicators (Python, Node.js, etc.)
 
-The configuration is automatically loaded via the `STARSHIP_CONFIG` environment variable set in `.zshrc`.
+The configuration is symlinked to `~/.config/starship.toml`, which is the default location Starship looks for.
 
 ## Node.js with pnpm
 

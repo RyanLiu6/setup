@@ -63,6 +63,14 @@ jobs:
           exit 1
         fi
 
+        # Check zprofile (symlink)
+        if [ -L ~/.zprofile ]; then
+          echo "✓ ~/.zprofile linked"
+        else
+          echo "✗ ~/.zprofile not linked"
+          exit 1
+        fi
+
         # Check direnv config (symlink)
         if [ -L ~/.config/direnv/direnvrc ]; then
           echo "✓ ~/.config/direnv/direnvrc linked"
@@ -79,11 +87,27 @@ jobs:
           exit 1
         fi
 
-        # Check Ghostty config
-        if [ -L ~/.config/ghostty/config ]; then
-          echo "✓ ~/.config/ghostty/config linked"
+        # Check Ghostty config directory (entire directory is symlinked)
+        if [ -L ~/.config/ghostty ]; then
+          echo "✓ ~/.config/ghostty directory linked"
         else
-          echo "✗ ~/.config/ghostty/config not linked"
+          echo "✗ ~/.config/ghostty directory not linked"
+          exit 1
+        fi
+
+        # Verify colour schemes are accessible (relative paths in config work)
+        if [ -f ~/.config/ghostty/colours/eva01 ]; then
+          echo "✓ Ghostty colour scheme eva01 accessible"
+        else
+          echo "✗ Ghostty colour scheme eva01 not accessible"
+          exit 1
+        fi
+
+        # Check Starship config (symlink)
+        if [ -L ~/.config/starship.toml ]; then
+          echo "✓ ~/.config/starship.toml linked"
+        else
+          echo "✗ ~/.config/starship.toml not linked"
           exit 1
         fi
 
@@ -306,6 +330,13 @@ jobs:
       run: |
         echo "Verifying symlinks were recreated..."
 
+        if [ -L ~/.zprofile ]; then
+          echo "✓ .zprofile symlink recreated"
+        else
+          echo "✗ .zprofile symlink not recreated"
+          exit 1
+        fi
+
         if [ -L ~/.config/direnv/direnvrc ]; then
           echo "✓ direnvrc symlink recreated"
         else
@@ -320,10 +351,25 @@ jobs:
           exit 1
         fi
 
-        if [ -L ~/.config/ghostty/config ]; then
-          echo "✓ ghostty config symlink recreated"
+        if [ -L ~/.config/ghostty ]; then
+          echo "✓ ghostty directory symlink recreated"
         else
-          echo "✗ ghostty config symlink not recreated"
+          echo "✗ ghostty directory symlink not recreated"
+          exit 1
+        fi
+
+        # Verify colour schemes are accessible after reset
+        if [ -f ~/.config/ghostty/colours/eva01 ]; then
+          echo "✓ ghostty colour scheme accessible after reset"
+        else
+          echo "✗ ghostty colour scheme not accessible after reset"
+          exit 1
+        fi
+
+        if [ -L ~/.config/starship.toml ]; then
+          echo "✓ starship.toml symlink recreated"
+        else
+          echo "✗ starship.toml symlink not recreated"
           exit 1
         fi
 
