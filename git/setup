@@ -31,7 +31,7 @@ else
 fi
 
 # Configure git to use shared configuration
-git config --global include.path "~/dev/setup/git/.gitconfig.shared"
+git config --global include.path "$SETUP_DIR/git/.gitconfig.shared"
 echo "  ✓ Configured git to include shared configuration"
 echo "  ✓ Shared config includes: aliases, push/fetch/merge settings, URL rewrites"
 
