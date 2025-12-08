@@ -11,3 +11,10 @@
 _claude
 .claude
 .cursor
+.gemini/
+.opencode/
+opencode.json
+.sst
+.worktrees
+.serena/
+**/.serena

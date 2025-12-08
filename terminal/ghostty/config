@@ -58,3 +58,6 @@ keybind = ctrl+backspace=esc:0x7f
 # This override sends \x1b\r which is what iTerm2 sends and apps expect.
 # See: https://github.com/ghostty-org/ghostty/issues/1850
 keybind = shift+enter=text:\x1b\r
+
+# New Tab settings
+window-inherit-working-directory = false
