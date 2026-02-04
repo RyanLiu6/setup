@@ -204,6 +204,14 @@ jobs:
           fi
         fi
 
+        # Check lazygit
+        if command -v lazygit &> /dev/null; then
+          echo "✓ lazygit is available ($(lazygit --version | head -1))"
+        else
+          echo "✗ lazygit not found"
+          exit 1
+        fi
+
     - name: Verify git configuration
       run: |
         echo "Checking git configuration..."
