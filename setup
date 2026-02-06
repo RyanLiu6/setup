@@ -43,6 +43,7 @@ echo ""
 "$SETUP_DIR/terminal/setup"
 "$SETUP_DIR/direnv/setup"
 "$SETUP_DIR/git/setup"
+"$SETUP_DIR/lazygit/setup"
 "$SETUP_DIR/shell/setup"
 
 echo ""

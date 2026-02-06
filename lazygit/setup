@@ -1,0 +1,57 @@
+#!/bin/bash
+set -e
+
+SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+
+# Source platform detection helpers
+source "$SETUP_DIR/lib/platform.sh"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Lazygit Setup"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+OS=$(detect_os)
+
+# Check if lazygit is already installed
+if command -v lazygit &> /dev/null; then
+    echo "✓ lazygit already installed ($(lazygit --version | head -1))"
+    exit 0
+fi
+
+echo "📦 Installing lazygit..."
+
+case "$OS" in
+    macos)
+        brew install lazygit
+        ;;
+    linux)
+        # Install via GitHub releases for latest version
+        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+        if [[ -z "$LAZYGIT_VERSION" ]]; then
+            echo "⚠️  Failed to fetch latest lazygit version from GitHub API"
+            exit 1
+        fi
+        ARCH=$(uname -m)
+        case "$ARCH" in
+            x86_64|amd64) ARCH="x86_64" ;;
+            aarch64|arm64) ARCH="arm64" ;;
+            *)
+                echo "⚠️  Unsupported architecture: $ARCH"
+                exit 1
+                ;;
+        esac
+        curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_${ARCH}.tar.gz"
+        tar xf /tmp/lazygit.tar.gz -C /tmp lazygit
+        sudo install /tmp/lazygit /usr/local/bin
+        rm /tmp/lazygit /tmp/lazygit.tar.gz
+        ;;
+    *)
+        echo "⚠️  Unsupported operating system: $OS"
+        exit 1
+        ;;
+esac
+
+echo ""
+echo "✓ lazygit installed successfully!"
+echo ""

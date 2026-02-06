@@ -84,7 +84,7 @@ shellperf() {
     # Get sorted list of tags
     local tags=(${(ko)_shellperf_tag_times})
 
-    for tag in $tags; do
+    for tag in "${tags[@]}"; do
         local tag_total=${_shellperf_tag_times[$tag]}
         echo "[$tag] ${tag_total}ms"
 

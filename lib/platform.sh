@@ -41,57 +41,6 @@ detect_distro() {
     fi
 }
 
-# Install a package using the appropriate package manager
-# Usage: install_package <macos_pkg> [linux_pkg]
-# If linux_pkg is not provided, macos_pkg is used for both
-install_package() {
-    local macos_pkg="$1"
-    local linux_pkg="${2:-$1}"
-    local os=$(detect_os)
-
-    case "$os" in
-        macos)
-            if ! brew list "$macos_pkg" &> /dev/null; then
-                brew install "$macos_pkg"
-                return 0
-            fi
-            return 1  # Already installed
-            ;;
-        linux)
-            if ! dpkg -l "$linux_pkg" 2>/dev/null | grep -q "^ii"; then
-                sudo apt-get update -qq
-                sudo apt-get install -y "$linux_pkg"
-                return 0
-            fi
-            return 1
-            ;;
-        *)
-            echo "⚠️  Unsupported operating system"
-            return 2
-            ;;
-    esac
-}
-
-# Check if a package is installed
-# Usage: is_package_installed <macos_pkg> [linux_pkg]
-is_package_installed() {
-    local macos_pkg="$1"
-    local linux_pkg="${2:-$1}"
-    local os=$(detect_os)
-
-    case "$os" in
-        macos)
-            brew list "$macos_pkg" &> /dev/null
-            ;;
-        linux)
-            dpkg -l "$linux_pkg" 2>/dev/null | grep -q "^ii"
-            ;;
-        *)
-            return 1
-            ;;
-    esac
-}
-
 # Get the path to zsh
 get_zsh_path() {
     if command -v zsh &> /dev/null; then
@@ -119,7 +68,8 @@ ensure_zsh() {
             ;;
         linux)
             echo "📦 Installing zsh..."
-            install_package "zsh" "zsh"
+            sudo apt-get update -qq
+            sudo apt-get install -y zsh
             ;;
     esac
 }
@@ -134,20 +84,16 @@ setup_homebrew() {
     if ! command -v brew &> /dev/null; then
         echo "📦 Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        # Handle both Intel and Apple Silicon paths
-        if [[ -f /opt/homebrew/bin/brew ]]; then
-            eval "$(/opt/homebrew/bin/brew shellenv)"
-        elif [[ -f /usr/local/bin/brew ]]; then
-            eval "$(/usr/local/bin/brew shellenv)"
-        fi
         echo "✓ Homebrew installed successfully"
     else
         echo "✓ Homebrew already installed"
-        if [[ -f /opt/homebrew/bin/brew ]]; then
-            eval "$(/opt/homebrew/bin/brew shellenv)"
-        elif [[ -f /usr/local/bin/brew ]]; then
-            eval "$(/usr/local/bin/brew shellenv)"
-        fi
+    fi
+
+    # Ensure brew is in PATH (handles Intel and Apple Silicon)
+    if [[ -f /opt/homebrew/bin/brew ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [[ -f /usr/local/bin/brew ]]; then
+        eval "$(/usr/local/bin/brew shellenv)"
     fi
 }
 

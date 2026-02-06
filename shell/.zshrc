@@ -5,7 +5,7 @@ typeset -A evaluated_cmds
 function source_once() {
     local file=$1
     if [[ ! -v evaluated_cmds[$file] ]]; then
-        source $file
+        source "$file"
         evaluated_cmds[$file]=1
     fi
 }
@@ -14,9 +14,11 @@ function source_once() {
 _shellperf_tag "base" "Start base configuration" 2>/dev/null || true
 
 # Source all configuration files
-for config in ~/dev/setup/shell/.zsh/*.zsh; do
-    source_once $config
+_setup_dir="${${(%):-%N}:A:h}"
+for config in "$_setup_dir"/.zsh/*.zsh; do
+    source_once "$config"
 done
+unset _setup_dir
 
 _shellperf_tag "base" "Loaded base configs" 2>/dev/null || true
 
