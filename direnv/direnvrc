@@ -6,49 +6,9 @@ layout_uv() {
 
     local venv=.venv
     if [[ ! -d $venv ]]; then
-        log_status "creating python venv"
-        uv venv
-        log_status "installing dependencies"
-        uv pip install -e ".[dev]"
+        log_status "creating python venv and installing dependencies"
+        uv sync
     fi
 
-    source $venv/bin/activate
-}
-
-layout_venv() {
-    if [[ -d "$(basename $PWD).venv" ]]; then
-      VENV="$(basename $PWD).venv"
-    else
-      VENV="${VENV:-.venv}"
-    fi
-    source $VENV/bin/activate
-}
-
-layout_venvlocal() {
-    VENV="${VENV:-"$(basename $PWD).venv"}"
-    source $VENV/bin/activate
-}
-
-layout_poetry() {
-    PYPROJECT_TOML="${PYPROJECT_TOML:-pyproject.toml}"
-    if [[ ! -f "$PYPROJECT_TOML" ]]; then
-        log_status "No pyproject.toml found. Executing \`poetry init\` to create a \`$PYPROJECT_TOML\` first."
-        poetry init
-    fi
-
-    if [[ -d ".venv" ]]; then
-        VIRTUAL_ENV="$(pwd)/.venv"
-    else
-        VIRTUAL_ENV=$(poetry env info --path 2>/dev/null ; true)
-    fi
-
-    if [[ -z $VIRTUAL_ENV || ! -d $VIRTUAL_ENV ]]; then
-        log_status "No virtual environment exists. Executing \`poetry install\` to create one."
-        poetry install
-        VIRTUAL_ENV=$(poetry env info --path)
-    fi
-
-    PATH_add "$VIRTUAL_ENV/bin"
-    export POETRY_ACTIVE=1
-    export VIRTUAL_ENV
+    source "$venv/bin/activate"
 }

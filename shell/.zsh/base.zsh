@@ -38,10 +38,11 @@ else
 fi
 
 # iTerm 2 tab name for directories
-if [ $ITERM_SESSION_ID ]; then
-    precmd() {
+if [[ -n "$ITERM_SESSION_ID" ]]; then
+    _iterm_set_tab_name() {
         echo -ne "\e]0;${PWD##*/}\a"
     }
+    precmd_functions+=(_iterm_set_tab_name)
 fi
 
 # Optimize completion system
@@ -56,7 +57,9 @@ fi
 # Load completions efficiently (Homebrew is macOS only)
 if [[ "$OSTYPE" == darwin* ]] && type brew &>/dev/null; then
     # Add Homebrew completions to FPATH but don't initialize yet
-    FPATH="$(brew --prefix)/share/zsh/site-functions:$(brew --prefix)/share/zsh-completions:${FPATH}"
+    _brew_prefix="$(brew --prefix)"
+    FPATH="$_brew_prefix/share/zsh/site-functions:$_brew_prefix/share/zsh-completions:${FPATH}"
+    unset _brew_prefix
 fi
 
 # Defer completions but ensure they're loaded before first prompt
@@ -93,9 +96,11 @@ export LESSCHARSET=utf-8
 # History
 HISTFILE=~/.zhistory
 setopt APPEND_HISTORY
-HISTSIZE=1200
-SAVEHIST=1000
+HISTSIZE=10000
+SAVEHIST=10000
 setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
 setopt EXTENDED_HISTORY
 setopt SHARE_HISTORY
 

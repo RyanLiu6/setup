@@ -38,6 +38,24 @@ jobs:
         fi
         echo "✓ Homebrew is available"
 
+    - name: Validate script syntax
+      run: |
+        echo "Checking bash script syntax..."
+        failed=0
+        for f in "$SETUP_DIR"/setup "$SETUP_DIR"/reset $(find "$SETUP_DIR" -name 'setup' -path '*/*/setup') "$SETUP_DIR"/lib/platform.sh; do
+          if [ -f "$f" ]; then
+            if bash -n "$f"; then
+              echo "✓ $(echo "$f" | sed "s|$SETUP_DIR/||") syntax is valid"
+            else
+              echo "✗ $(echo "$f" | sed "s|$SETUP_DIR/||") has syntax errors"
+              failed=1
+            fi
+          fi
+        done
+        if [ "$failed" -eq 1 ]; then
+          exit 1
+        fi
+
     - name: Run main setup script
       run: |
         cd $SETUP_DIR
@@ -281,14 +299,31 @@ jobs:
           exit 0
         fi
 
-        # Source zshrc to check for syntax errors
-        # We use -n for syntax check without executing
+        # Check the loader file (~/.zshrc)
         if zsh -n ~/.zshrc; then
-          echo "✓ .zshrc syntax is valid"
+          echo "✓ ~/.zshrc loader syntax is valid"
         else
-          echo "✗ .zshrc has syntax errors"
+          echo "✗ ~/.zshrc has syntax errors"
           exit 1
         fi
+
+        # Check the main config file (shell/.zshrc)
+        if zsh -n "$SETUP_DIR/shell/.zshrc"; then
+          echo "✓ shell/.zshrc syntax is valid"
+        else
+          echo "✗ shell/.zshrc has syntax errors"
+          exit 1
+        fi
+
+        # Check all individual zsh config files
+        for f in "$SETUP_DIR"/shell/.zsh/*.zsh; do
+          if zsh -n "$f"; then
+            echo "✓ $(basename "$f") syntax is valid"
+          else
+            echo "✗ $(basename "$f") has syntax errors"
+            exit 1
+          fi
+        done
 
     - name: Test direnv layouts
       run: |
