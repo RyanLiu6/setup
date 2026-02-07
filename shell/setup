@@ -21,17 +21,7 @@ echo ""
 
 # Symlink .zprofile
 if [[ -f "$REPO_DIR/shell/.zprofile" ]]; then
-    if [[ -L ~/.zprofile ]]; then
-        echo "  ✓ .zprofile already linked"
-    elif [[ -f ~/.zprofile ]]; then
-        echo "  → Backing up existing .zprofile..."
-        mv ~/.zprofile ~/.zprofile.backup
-        ln -s "$REPO_DIR/shell/.zprofile" ~/.zprofile
-        echo "  ✓ .zprofile linked (backup saved)"
-    else
-        ln -s "$REPO_DIR/shell/.zprofile" ~/.zprofile
-        echo "  ✓ .zprofile linked"
-    fi
+    ensure_symlink "$REPO_DIR/shell/.zprofile" ~/.zprofile ".zprofile"
 fi
 
 # Setup ~/.zshrc as a loader that sources our config

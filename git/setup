@@ -3,6 +3,9 @@ set -e
 
 REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 
+# Source platform detection helpers
+source "$REPO_DIR/lib/platform.sh"
+
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Git Configuration Setup"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -18,17 +21,7 @@ echo "📝 Configuring git..."
 echo ""
 
 # Symlink global gitignore
-if [ -L ~/.gitignore_global ]; then
-    echo "  ✓ .gitignore_global already linked"
-elif [ -f ~/.gitignore_global ]; then
-    echo "  → Backing up existing .gitignore_global..."
-    mv ~/.gitignore_global ~/.gitignore_global.backup
-    ln -s "$REPO_DIR/git/.gitignore_global" ~/.gitignore_global
-    echo "  ✓ .gitignore_global linked (backup saved)"
-else
-    ln -s "$REPO_DIR/git/.gitignore_global" ~/.gitignore_global
-    echo "  ✓ .gitignore_global linked"
-fi
+ensure_symlink "$REPO_DIR/git/.gitignore_global" ~/.gitignore_global ".gitignore_global"
 
 # Configure git to use shared configuration
 git config --global include.path "$REPO_DIR/git/.gitconfig.shared"

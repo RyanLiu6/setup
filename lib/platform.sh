@@ -97,6 +97,35 @@ setup_homebrew() {
     fi
 }
 
+# Ensure a symlink exists and points to the correct target.
+# Handles stale symlinks (wrong target), existing files (backs up), and missing targets.
+ensure_symlink() {
+    local src="$1"
+    local target="$2"
+    local label="$3"
+
+    if [ -L "$target" ]; then
+        local current_target
+        current_target=$(readlink "$target")
+        if [ "$current_target" = "$src" ]; then
+            echo "  ✓ $label already linked"
+        else
+            echo "  → Updating stale $label symlink..."
+            rm "$target"
+            ln -s "$src" "$target"
+            echo "  ✓ $label relinked (was → $current_target)"
+        fi
+    elif [ -e "$target" ]; then
+        echo "  → Backing up existing $label..."
+        mv "$target" "$target.backup"
+        ln -s "$src" "$target"
+        echo "  ✓ $label linked (backup saved)"
+    else
+        ln -s "$src" "$target"
+        echo "  ✓ $label linked"
+    fi
+}
+
 # Print detected platform info
 print_platform_info() {
     local os=$(detect_os)
