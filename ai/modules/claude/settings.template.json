@@ -21,7 +21,6 @@
       "BashOutput",
       "KillShell",
       "mcp__playwright__*",
-      "mcp__chrome-devtools__*",
       "mcp__sentry__*",
       "mcp__glean_default__*"
     ],
@@ -33,7 +32,7 @@
     ],
     "defaultMode": "acceptEdits"
   },
-  "model": "us.anthropic.claude-opus-4-5-20251101-v1:0",
+  "model": "us.anthropic.claude-opus-4-6-v1",
   "statusLine": {
     "type": "command",
     "command": "npx -y ccstatusline@latest",
@@ -43,9 +42,10 @@
     "ralph-loop@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true
+    "playwright@claude-plugins-official": true,
+    "linear@claude-plugins-official": true
   },
+  "enableAllProjectMcpServers": true,
   "alwaysThinkingEnabled": true,
   "hooks": {
     "Notification": [

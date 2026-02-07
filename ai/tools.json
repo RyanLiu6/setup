@@ -6,8 +6,10 @@
       "tool_dir": "modules/claude",
       "symlinks": [
         {"source": "CLAUDE.md", "target": "CLAUDE.md"},
-        {"source": "hooks", "target": "hooks"}
+        {"source": "hooks", "target": "hooks"},
+        {"source": "settings.json", "target": "settings.json"}
       ],
+      "settings_template": {"template": "settings.template.json", "target": "settings.json"},
       "skills_symlink": {"source": "skills", "target": "skills"},
       "extra_skills_dirs": ["work/skills"]
     },

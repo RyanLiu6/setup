@@ -99,6 +99,17 @@ install_zsh_completions() {
 
 install_zsh_completions
 
+# Install terminal-notifier (macOS only, used by Claude Code notification hooks)
+if [[ "$OS" == "macos" ]]; then
+    if ! command -v terminal-notifier &> /dev/null; then
+        echo "  → Installing terminal-notifier..."
+        brew install terminal-notifier
+        echo "  ✓ terminal-notifier installed successfully"
+    else
+        echo "  ✓ terminal-notifier already installed"
+    fi
+fi
+
 # Install Ghostty terminal emulator
 install_ghostty() {
     case "$OS" in
