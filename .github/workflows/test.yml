@@ -455,18 +455,6 @@ jobs:
         cd $GITHUB_WORKSPACE/home-repo
         uv run mypy scripts/ tasks.py tests/
 
-    - name: Bootstrap settings from template (CI only)
-      run: |
-        cd $GITHUB_WORKSPACE/home-repo
-        for dir in ai/modules/*/; do
-          template="$dir/settings.template.json"
-          target="$dir/settings.json"
-          if [ -f "$template" ] && [ ! -f "$target" ]; then
-            cp "$template" "$target"
-            echo "✓ Created $(basename "$dir")/settings.json from template"
-          fi
-        done
-
     - name: Run tests
       run: |
         cd $GITHUB_WORKSPACE/home-repo
