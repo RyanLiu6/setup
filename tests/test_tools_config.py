@@ -52,7 +52,13 @@ def test_tool_symlink_sources_exist(
     tool = tools_config["tools"][tool_id]
     tool_dir = ai_root / tool["tool_dir"]
 
+    template_targets = set()
+    if "settings_template" in tool:
+        template_targets.add(tool["settings_template"]["target"])
+
     for symlink in tool.get("symlinks", []):
+        if symlink["source"] in template_targets:
+            continue
         source = tool_dir / symlink["source"]
         assert source.exists(), f"Tool '{tool_id}' symlink source does not exist: {source}"
 
