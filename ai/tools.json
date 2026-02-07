@@ -1,0 +1,55 @@
+{
+  "tools": {
+    "claude": {
+      "name": "Claude Code",
+      "config_dir": "~/.claude",
+      "tool_dir": "modules/claude",
+      "symlinks": [
+        {"source": "CLAUDE.md", "target": "CLAUDE.md"},
+        {"source": "hooks", "target": "hooks"}
+      ],
+      "skills_symlink": {"source": "skills", "target": "skills"},
+      "extra_skills_dirs": ["work/skills"]
+    },
+    "gemini": {
+      "name": "Gemini CLI",
+      "config_dir": "~/.gemini",
+      "tool_dir": "modules/gemini",
+      "symlinks": [
+        {"source": "GEMINI.md", "target": "GEMINI.md"}
+      ],
+      "skills_generate": {"source": "skills", "target": "commands", "format": "toml"}
+    },
+    "opencode": {
+      "name": "OpenCode",
+      "config_dir": "~/.config/opencode",
+      "tool_dir": "modules/opencode",
+      "symlinks": [
+        {"source": "AGENTS.md", "target": "AGENTS.md"},
+        {"source": "opencode.json", "target": "opencode.json"}
+      ],
+      "skills_symlink": {"source": "skills", "target": "command"}
+    },
+    "cursor": {
+      "name": "Cursor",
+      "config_dir": "~/.cursor",
+      "tool_dir": "modules/cursor",
+      "symlinks": [],
+      "skills_symlink": {"source": "skills", "target": "skills"},
+      "skills_generate": {"source": "skills", "target": "commands", "format": "md"}
+    },
+    "antigravity": {
+      "name": "Antigravity",
+      "config_dir": "~/.agent",
+      "tool_dir": "modules/antigravity",
+      "symlinks": [],
+      "skills_symlink": {"source": "skills", "target": "skills"}
+    },
+    "vscode": {
+      "name": "VS Code",
+      "config_dir": "~/Library/Application Support/Code/User",
+      "tool_dir": "modules/vscode",
+      "symlinks": []
+    }
+  }
+}
