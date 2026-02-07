@@ -1,3 +1,12 @@
+# Ensure Homebrew is in PATH (needed for non-login shells like exec zsh / reload)
+if [[ "$OSTYPE" == darwin* ]]; then
+    if [[ -f /opt/homebrew/bin/brew ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [[ -f /usr/local/bin/brew ]]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+fi
+
 # Enable caching of evaluated commands
 typeset -A evaluated_cmds
 
