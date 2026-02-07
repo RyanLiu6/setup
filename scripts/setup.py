@@ -398,23 +398,17 @@ def ensure_settings_from_template(tool_dir: Path, template_cfg: SettingsTemplate
         )
         return False
 
-    if not sys.stdin.isatty():
+    print_colored(
+        f"  No {target_path.name} found — a template is available at {template_path.name}",
+        Colors.YELLOW,
+    )
+    reply = input(f"  Create {target_path.name} from template? [y/N] ").strip().lower()
+    if reply != "y":
         print_colored(
-            f"  Non-interactive mode — auto-creating {target_path.name} from template",
-            Colors.YELLOW,
+            f"  {target_path.name} is required — please create it manually and re-run setup.",
+            Colors.RED,
         )
-    else:
-        print_colored(
-            f"  No {target_path.name} found — a template is available at {template_path.name}",
-            Colors.YELLOW,
-        )
-        reply = input(f"  Create {target_path.name} from template? [y/N] ").strip().lower()
-        if reply != "y":
-            print_colored(
-                f"  {target_path.name} is required — please create it manually and re-run setup.",
-                Colors.RED,
-            )
-            sys.exit(1)
+        sys.exit(1)
 
     shutil.copy2(template_path, target_path)
     print_colored(f"  Created {target_path.name} from {template_path.name}", Colors.GREEN)
