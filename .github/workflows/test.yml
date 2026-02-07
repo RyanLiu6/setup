@@ -24,6 +24,11 @@ jobs:
     - name: Set SETUP_DIR environment variable
       run: echo "SETUP_DIR=$GITHUB_WORKSPACE/setup-repo" >> $GITHUB_ENV
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "latest"
+
     - name: Install Homebrew (macOS only)
       if: runner.os == 'macOS'
       run: |
@@ -470,6 +475,11 @@ jobs:
 
     - name: Set SETUP_DIR environment variable
       run: echo "SETUP_DIR=$GITHUB_WORKSPACE/setup-repo" >> $GITHUB_ENV
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "latest"
 
     - name: Install Homebrew (macOS only)
       if: runner.os == 'macOS'
