@@ -58,7 +58,7 @@ Running `./setup` will:
 
 The entire Ghostty directory is symlinked from this repo:
 ```
-~/.config/ghostty/ → ~/dev/setup/terminal/ghostty/
+~/.config/ghostty/ → ~/dev/home/terminal/ghostty/
 ```
 
 This ensures relative paths in the config (like `config-file = colours/eva01`) resolve correctly. Changes to the config in this repo are immediately reflected.

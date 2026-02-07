@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 
 # Source platform detection helpers
-source "$SETUP_DIR/lib/platform.sh"
+source "$REPO_DIR/lib/platform.sh"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Shell Configuration Setup"
@@ -20,16 +20,16 @@ echo "📝 Setting up shell configuration..."
 echo ""
 
 # Symlink .zprofile
-if [[ -f "$SETUP_DIR/shell/.zprofile" ]]; then
+if [[ -f "$REPO_DIR/shell/.zprofile" ]]; then
     if [[ -L ~/.zprofile ]]; then
         echo "  ✓ .zprofile already linked"
     elif [[ -f ~/.zprofile ]]; then
         echo "  → Backing up existing .zprofile..."
         mv ~/.zprofile ~/.zprofile.backup
-        ln -s "$SETUP_DIR/shell/.zprofile" ~/.zprofile
+        ln -s "$REPO_DIR/shell/.zprofile" ~/.zprofile
         echo "  ✓ .zprofile linked (backup saved)"
     else
-        ln -s "$SETUP_DIR/shell/.zprofile" ~/.zprofile
+        ln -s "$REPO_DIR/shell/.zprofile" ~/.zprofile
         echo "  ✓ .zprofile linked"
     fi
 fi
@@ -38,13 +38,13 @@ fi
 # This allows tools to add lines to ~/.zshrc without breaking our setup
 if [[ ! -f ~/.zshrc ]]; then
     # No .zshrc exists, create from loader template with correct path
-    sed "s|__SETUP_DIR__|$SETUP_DIR|g" "$SETUP_DIR/shell/.zshrc.loader" > ~/.zshrc
-    echo "  ✓ Created ~/.zshrc (sources $SETUP_DIR/shell/.zshrc)"
-elif ! grep -qF "source $SETUP_DIR/shell/.zshrc" ~/.zshrc; then
+    sed "s|__REPO_DIR__|$REPO_DIR|g" "$REPO_DIR/shell/.zshrc.loader" > ~/.zshrc
+    echo "  ✓ Created ~/.zshrc (sources $REPO_DIR/shell/.zshrc)"
+elif ! grep -qF "source $REPO_DIR/shell/.zshrc" ~/.zshrc; then
     # .zshrc exists but doesn't source our config, prepend loader content
     echo "  → Existing ~/.zshrc found, adding source line..."
     tmp_file=$(mktemp)
-    sed "s|__SETUP_DIR__|$SETUP_DIR|g" "$SETUP_DIR/shell/.zshrc.loader" > "$tmp_file"
+    sed "s|__REPO_DIR__|$REPO_DIR|g" "$REPO_DIR/shell/.zshrc.loader" > "$tmp_file"
     echo "" >> "$tmp_file"
     echo "# Previous ~/.zshrc content below" >> "$tmp_file"
     cat ~/.zshrc >> "$tmp_file"

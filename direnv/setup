@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 
 # Source platform detection helpers
-source "$SETUP_DIR/lib/platform.sh"
+source "$REPO_DIR/lib/platform.sh"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Direnv Setup"
@@ -42,10 +42,10 @@ if [ -L ~/.config/direnv/direnvrc ]; then
 elif [ -f ~/.config/direnv/direnvrc ]; then
     echo "  → Backing up existing direnvrc..."
     mv ~/.config/direnv/direnvrc ~/.config/direnv/direnvrc.backup
-    ln -s "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
+    ln -s "$REPO_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
     echo "✓ direnvrc linked (backup saved)"
 else
-    ln -s "$SETUP_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
+    ln -s "$REPO_DIR/direnv/direnvrc" ~/.config/direnv/direnvrc
     echo "✓ direnvrc linked to ~/.config/direnv/direnvrc"
 fi
 

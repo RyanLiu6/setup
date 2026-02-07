@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Git Configuration Setup"
@@ -23,15 +23,15 @@ if [ -L ~/.gitignore_global ]; then
 elif [ -f ~/.gitignore_global ]; then
     echo "  → Backing up existing .gitignore_global..."
     mv ~/.gitignore_global ~/.gitignore_global.backup
-    ln -s "$SETUP_DIR/git/.gitignore_global" ~/.gitignore_global
+    ln -s "$REPO_DIR/git/.gitignore_global" ~/.gitignore_global
     echo "  ✓ .gitignore_global linked (backup saved)"
 else
-    ln -s "$SETUP_DIR/git/.gitignore_global" ~/.gitignore_global
+    ln -s "$REPO_DIR/git/.gitignore_global" ~/.gitignore_global
     echo "  ✓ .gitignore_global linked"
 fi
 
 # Configure git to use shared configuration
-git config --global include.path "$SETUP_DIR/git/.gitconfig.shared"
+git config --global include.path "$REPO_DIR/git/.gitconfig.shared"
 echo "  ✓ Configured git to include shared configuration"
 echo "  ✓ Shared config includes: aliases, push/fetch/merge settings, URL rewrites"
 

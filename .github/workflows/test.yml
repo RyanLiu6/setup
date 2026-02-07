@@ -19,10 +19,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        path: setup-repo
+        path: home-repo
 
-    - name: Set SETUP_DIR environment variable
-      run: echo "SETUP_DIR=$GITHUB_WORKSPACE/setup-repo" >> $GITHUB_ENV
+    - name: Set REPO_DIR environment variable
+      run: echo "REPO_DIR=$GITHUB_WORKSPACE/home-repo" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
@@ -47,12 +47,12 @@ jobs:
       run: |
         echo "Checking bash script syntax..."
         failed=0
-        for f in "$SETUP_DIR"/scripts/setup "$SETUP_DIR"/scripts/reset $(find "$SETUP_DIR" -name 'setup' -path '*/*/setup') "$SETUP_DIR"/lib/platform.sh; do
+        for f in "$REPO_DIR"/scripts/setup "$REPO_DIR"/scripts/reset $(find "$REPO_DIR" -name 'setup' -path '*/*/setup') "$REPO_DIR"/lib/platform.sh; do
           if [ -f "$f" ]; then
             if bash -n "$f"; then
-              echo "✓ $(echo "$f" | sed "s|$SETUP_DIR/||") syntax is valid"
+              echo "✓ $(echo "$f" | sed "s|$REPO_DIR/||") syntax is valid"
             else
-              echo "✗ $(echo "$f" | sed "s|$SETUP_DIR/||") has syntax errors"
+              echo "✗ $(echo "$f" | sed "s|$REPO_DIR/||") has syntax errors"
               failed=1
             fi
           fi
@@ -63,7 +63,7 @@ jobs:
 
     - name: Run main setup script
       run: |
-        cd $SETUP_DIR
+        cd $REPO_DIR
         ./scripts/setup
 
     - name: Verify configuration files were created
@@ -73,7 +73,7 @@ jobs:
         # Check zsh configs
         if [ -f ~/.zshrc ]; then
           echo "✓ ~/.zshrc created"
-          # Verify it sources our config (path varies based on SETUP_DIR)
+          # Verify it sources our config (path varies based on REPO_DIR)
           if grep -q "source .*/shell/.zshrc" ~/.zshrc; then
             echo "✓ ~/.zshrc sources our config"
           else
@@ -111,7 +111,7 @@ jobs:
         fi
 
         # Check git shared config exists
-        if [ -f "$SETUP_DIR/git/.gitconfig.shared" ]; then
+        if [ -f "$REPO_DIR/git/.gitconfig.shared" ]; then
           echo "✓ git/.gitconfig.shared exists"
         else
           echo "✗ git/.gitconfig.shared not found"
@@ -313,7 +313,7 @@ jobs:
         fi
 
         # Check the main config file (shell/.zshrc)
-        if zsh -n "$SETUP_DIR/shell/.zshrc"; then
+        if zsh -n "$REPO_DIR/shell/.zshrc"; then
           echo "✓ shell/.zshrc syntax is valid"
         else
           echo "✗ shell/.zshrc has syntax errors"
@@ -321,7 +321,7 @@ jobs:
         fi
 
         # Check all individual zsh config files
-        for f in "$SETUP_DIR"/shell/.zsh/*.zsh; do
+        for f in "$REPO_DIR"/shell/.zsh/*.zsh; do
           if zsh -n "$f"; then
             echo "✓ $(basename "$f") syntax is valid"
           else
@@ -351,7 +351,7 @@ jobs:
     - name: Test setup idempotency
       run: |
         echo "Testing that setup can be run multiple times..."
-        cd $SETUP_DIR
+        cd $REPO_DIR
 
         # Run setup again
         ./scripts/setup
@@ -423,7 +423,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        path: setup-repo
+        path: home-repo
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
@@ -437,27 +437,27 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd $GITHUB_WORKSPACE/setup-repo
+        cd $GITHUB_WORKSPACE/home-repo
         uv sync --group dev
 
     - name: Check formatting
       run: |
-        cd $GITHUB_WORKSPACE/setup-repo
+        cd $GITHUB_WORKSPACE/home-repo
         uv run ruff format --check
 
     - name: Lint
       run: |
-        cd $GITHUB_WORKSPACE/setup-repo
+        cd $GITHUB_WORKSPACE/home-repo
         uv run ruff check
 
     - name: Type check
       run: |
-        cd $GITHUB_WORKSPACE/setup-repo
+        cd $GITHUB_WORKSPACE/home-repo
         uv run mypy scripts/ tasks.py tests/
 
     - name: Run tests
       run: |
-        cd $GITHUB_WORKSPACE/setup-repo
+        cd $GITHUB_WORKSPACE/home-repo
         uv run pytest -v
 
   test-reset:
@@ -471,10 +471,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        path: setup-repo
+        path: home-repo
 
-    - name: Set SETUP_DIR environment variable
-      run: echo "SETUP_DIR=$GITHUB_WORKSPACE/setup-repo" >> $GITHUB_ENV
+    - name: Set REPO_DIR environment variable
+      run: echo "REPO_DIR=$GITHUB_WORKSPACE/home-repo" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
@@ -497,13 +497,13 @@ jobs:
 
     - name: Run initial setup
       run: |
-        cd $SETUP_DIR
+        cd $REPO_DIR
         ./scripts/setup
 
     - name: Run reset script
       run: |
         echo "Testing reset script..."
-        cd $SETUP_DIR
+        cd $REPO_DIR
 
         # Run reset (auto-confirm with yes)
         echo "y" | ./scripts/reset
