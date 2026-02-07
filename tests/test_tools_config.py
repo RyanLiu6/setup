@@ -52,7 +52,13 @@ def test_tool_symlink_sources_exist(
     tool = tools_config["tools"][tool_id]
     tool_dir = ai_root / tool["tool_dir"]
 
+    template_targets = set()
+    if "settings_template" in tool:
+        template_targets.add(tool["settings_template"]["target"])
+
     for symlink in tool.get("symlinks", []):
+        if symlink["source"] in template_targets:
+            continue
         source = tool_dir / symlink["source"]
         assert source.exists(), f"Tool '{tool_id}' symlink source does not exist: {source}"
 
@@ -92,3 +98,38 @@ def test_extra_skills_dirs_exist(tools_config: dict[str, Any], ai_root: Path) ->
             if not path.exists():
                 pytest.skip(f"Optional extra_skills_dir '{extra_dir}' not present (local-only)")
             assert path.is_dir()
+
+
+@pytest.mark.parametrize("tool_id", _get_tool_ids())
+def test_settings_template_exists(
+    tool_id: str, tools_config: dict[str, Any], ai_root: Path
+) -> None:
+    tool = tools_config["tools"][tool_id]
+    if "settings_template" not in tool:
+        pytest.skip(f"Tool '{tool_id}' has no settings_template")
+
+    template_path = ai_root / tool["tool_dir"] / tool["settings_template"]["template"]
+    assert template_path.exists(), f"Template not found: {template_path}"
+
+    with open(template_path) as f:
+        content = json.load(f)
+    assert isinstance(content, dict)
+
+
+def test_claude_template_has_no_work_config(ai_root: Path) -> None:
+    template_path = ai_root / "modules" / "claude" / "settings.template.json"
+    content = template_path.read_text()
+
+    assert "instacart" not in content.lower()
+    assert "env" not in json.loads(content), "Template should not contain env vars"
+    assert "extraKnownMarketplaces" not in json.loads(content)
+
+
+def test_claude_template_only_official_plugins(ai_root: Path) -> None:
+    template_path = ai_root / "modules" / "claude" / "settings.template.json"
+    config = json.loads(template_path.read_text())
+
+    for plugin_key in config.get("enabledPlugins", {}):
+        assert plugin_key.endswith("@claude-plugins-official"), (
+            f"Non-official plugin in template: {plugin_key}"
+        )

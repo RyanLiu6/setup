@@ -1,7 +1,15 @@
 from pathlib import Path
 from textwrap import dedent
 
-from scripts.setup import convert_md_to_toml, find_skill_files, generate_memory, parse_frontmatter
+import pytest
+
+from scripts.setup import (
+    convert_md_to_toml,
+    ensure_settings_from_template,
+    find_skill_files,
+    generate_memory,
+    parse_frontmatter,
+)
 
 
 def test_parse_frontmatter() -> None:
@@ -154,3 +162,38 @@ def test_generate_memory_missing_source(tmp_path: Path) -> None:
     result = generate_memory(missing_dir, config_dir, "rules.md", "single_file")
 
     assert result is False
+
+
+def test_ensure_settings_from_template_target_exists(tmp_path: Path) -> None:
+    (tmp_path / "settings.template.json").write_text('{"key": "value"}')
+    (tmp_path / "settings.json").write_text('{"existing": true}')
+
+    result = ensure_settings_from_template(
+        tmp_path, {"template": "settings.template.json", "target": "settings.json"}
+    )
+
+    assert result is True
+    assert '"existing": true' in (tmp_path / "settings.json").read_text()
+
+
+def test_ensure_settings_from_template_missing_template(tmp_path: Path) -> None:
+    result = ensure_settings_from_template(
+        tmp_path, {"template": "missing.json", "target": "settings.json"}
+    )
+
+    assert result is False
+    assert not (tmp_path / "settings.json").exists()
+
+
+def test_ensure_settings_from_template_creates_from_template(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / "settings.template.json").write_text('{"from": "template"}')
+    monkeypatch.setattr("builtins.input", lambda _: "y")
+
+    result = ensure_settings_from_template(
+        tmp_path, {"template": "settings.template.json", "target": "settings.json"}
+    )
+
+    assert result is True
+    assert '"from": "template"' in (tmp_path / "settings.json").read_text()

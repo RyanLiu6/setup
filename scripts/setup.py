@@ -44,11 +44,17 @@ class MemoryGenerate(TypedDict):
     mode: str
 
 
+class SettingsTemplate(TypedDict):
+    template: str
+    target: str
+
+
 class ToolConfig(TypedDict, total=False):
     name: str
     config_dir: str
     tool_dir: str
     symlinks: list[Symlink]
+    settings_template: SettingsTemplate
     skills_symlink: SkillsSymlink
     skills_generate: SkillsGenerate
     memory_generate: MemoryGenerate
@@ -364,6 +370,61 @@ def generate_memory(source_dir: Path, config_dir: Path, target: str, mode: str) 
     return True
 
 
+def ensure_settings_from_template(tool_dir: Path, template_cfg: SettingsTemplate) -> bool:
+    """Prompt the user to create a settings file from a template if it doesn't exist.
+
+    If the target settings file already exists in the tool directory, this is a
+    no-op.  Otherwise the user is asked whether to copy the template; answering
+    'n' exits the process since the settings file is required.
+
+    Args:
+        tool_dir: The tool's source directory (e.g. repo/ai/modules/claude).
+        template_cfg: Dict with 'template' (source filename) and 'target' (output filename).
+
+    Returns:
+        True if the settings file exists (already or newly created), False otherwise.
+    """
+    template_path = tool_dir / template_cfg["template"]
+    target_path = tool_dir / template_cfg["target"]
+
+    if target_path.exists():
+        print_colored(f"  Settings file already exists: {target_path.name}", Colors.GREEN)
+        return True
+
+    if not template_path.exists():
+        print_colored(
+            f"  Warning: Template {template_cfg['template']} not found at {template_path}",
+            Colors.RED,
+        )
+        return False
+
+    if os.environ.get("CI"):
+        print_colored(
+            f"  CI detected — auto-creating {target_path.name} from template",
+            Colors.YELLOW,
+        )
+    else:
+        print_colored(
+            f"  No {target_path.name} found — a template is available at {template_path.name}",
+            Colors.YELLOW,
+        )
+        reply = input(f"  Create {target_path.name} from template? [y/N] ").strip().lower()
+        if reply != "y":
+            print_colored(
+                f"  {target_path.name} is required — please create it manually and re-run setup.",
+                Colors.RED,
+            )
+            sys.exit(1)
+
+    shutil.copy2(template_path, target_path)
+    print_colored(f"  Created {target_path.name} from {template_path.name}", Colors.GREEN)
+    print_colored(
+        f"  Edit {target_path} to customise your settings",
+        Colors.YELLOW,
+    )
+    return True
+
+
 def setup_tool(tool_id: str, tool_config: ToolConfig, ai_root: Path) -> bool:
     name = tool_config["name"]
     config_dir = Path(os.path.expanduser(tool_config["config_dir"]))
@@ -384,6 +445,11 @@ def setup_tool(tool_id: str, tool_config: ToolConfig, ai_root: Path) -> bool:
         config_dir.mkdir(parents=True)
 
     success = True
+
+    # Handle settings template (must run before symlinks so the source file exists)
+    if "settings_template" in tool_config:
+        ensure_settings_from_template(tool_dir, tool_config["settings_template"])
+
     for symlink in tool_config.get("symlinks", []):
         source = tool_dir / symlink["source"]
         target = config_dir / symlink["target"]
