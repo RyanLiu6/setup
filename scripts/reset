@@ -1,0 +1,32 @@
+#!/bin/bash
+set -e
+
+# Thin wrapper — confirmation prompt, then delegate to invoke.
+
+SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+
+source "$SETUP_DIR/lib/platform.sh"
+
+echo "======================================"
+echo "Development Environment Reset"
+echo "======================================"
+echo ""
+
+print_platform_info
+echo ""
+
+echo "⚠️  This will:"
+echo "  - Remove all config symlinks and files"
+echo "  - Reset git global configuration"
+echo "  - Re-run full setup from scratch"
+echo ""
+read -p "Continue? [y/N] " -n 1 -r
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Aborted."
+    exit 1
+fi
+
+echo ""
+
+uv run --directory "$SETUP_DIR" inv reset --yes

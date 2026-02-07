@@ -3,3 +3,21 @@ ignore/
 # Work-specific shell files (not to be committed)
 work.zsh
 .zshrc.local
+
+# Python project artifacts
+.venv/
+__pycache__/
+**/__pycache__/
+**/*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+uv.lock
+
+# Local-only directories
+ai/work/
+ai/modules/claude/settings.json
+
+# Override global gitignore for files that need to be tracked
+!.envrc
+!ai/modules/opencode/opencode.json

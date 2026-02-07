@@ -22,7 +22,7 @@ This repository contains cross-platform configuration for macOS and Linux:
 2. Run the setup script:
    ```bash
    cd ~/dev/setup
-   ./setup
+   ./scripts/setup
    ```
 
 3. Restart your terminal:
@@ -38,7 +38,7 @@ If something is broken or you want a fresh start, run the reset script:
 
 ```bash
 cd ~/dev/setup
-./reset
+./scripts/reset
 ```
 
 This will:
@@ -55,7 +55,7 @@ By default, the setup expects to be cloned to `~/dev/setup`. If you prefer a dif
 ```bash
 export SETUP_DIR=/path/to/your/setup
 cd $SETUP_DIR
-./setup
+./scripts/setup
 ```
 
 ## Components

@@ -42,7 +42,7 @@ jobs:
       run: |
         echo "Checking bash script syntax..."
         failed=0
-        for f in "$SETUP_DIR"/setup "$SETUP_DIR"/reset $(find "$SETUP_DIR" -name 'setup' -path '*/*/setup') "$SETUP_DIR"/lib/platform.sh; do
+        for f in "$SETUP_DIR"/scripts/setup "$SETUP_DIR"/scripts/reset $(find "$SETUP_DIR" -name 'setup' -path '*/*/setup') "$SETUP_DIR"/lib/platform.sh; do
           if [ -f "$f" ]; then
             if bash -n "$f"; then
               echo "✓ $(echo "$f" | sed "s|$SETUP_DIR/||") syntax is valid"
@@ -59,7 +59,7 @@ jobs:
     - name: Run main setup script
       run: |
         cd $SETUP_DIR
-        ./setup
+        ./scripts/setup
 
     - name: Verify configuration files were created
       run: |
@@ -349,9 +349,111 @@ jobs:
         cd $SETUP_DIR
 
         # Run setup again
-        ./setup
+        ./scripts/setup
 
         echo "✓ Setup script is idempotent (can be run multiple times)"
+
+    - name: Verify AI tool symlinks
+      run: |
+        echo "Checking AI tool symlinks..."
+
+        # Claude Code
+        if [ -L ~/.claude/CLAUDE.md ]; then
+          echo "✓ ~/.claude/CLAUDE.md linked"
+        else
+          echo "✗ ~/.claude/CLAUDE.md not linked"
+          exit 1
+        fi
+
+        if [ -d ~/.claude/skills ]; then
+          echo "✓ ~/.claude/skills directory exists"
+        else
+          echo "✗ ~/.claude/skills not found"
+          exit 1
+        fi
+
+        # Gemini CLI
+        if [ -L ~/.gemini/GEMINI.md ]; then
+          echo "✓ ~/.gemini/GEMINI.md linked"
+        else
+          echo "✗ ~/.gemini/GEMINI.md not linked"
+          exit 1
+        fi
+
+        if [ -d ~/.gemini/commands ]; then
+          echo "✓ ~/.gemini/commands directory exists"
+        else
+          echo "✗ ~/.gemini/commands not found"
+          exit 1
+        fi
+
+        # OpenCode
+        if [ -L ~/.config/opencode/AGENTS.md ]; then
+          echo "✓ ~/.config/opencode/AGENTS.md linked"
+        else
+          echo "✗ ~/.config/opencode/AGENTS.md not linked"
+          exit 1
+        fi
+
+        # Cursor
+        if [ -d ~/.cursor/skills ]; then
+          echo "✓ ~/.cursor/skills directory exists"
+        else
+          echo "✗ ~/.cursor/skills not found"
+          exit 1
+        fi
+
+        # Antigravity
+        if [ -d ~/.agent/skills ]; then
+          echo "✓ ~/.agent/skills directory exists"
+        else
+          echo "✗ ~/.agent/skills not found"
+          exit 1
+        fi
+
+  test-ai:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        path: setup-repo
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "latest"
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      run: |
+        cd $GITHUB_WORKSPACE/setup-repo
+        uv sync --group dev
+
+    - name: Check formatting
+      run: |
+        cd $GITHUB_WORKSPACE/setup-repo
+        uv run ruff format --check
+
+    - name: Lint
+      run: |
+        cd $GITHUB_WORKSPACE/setup-repo
+        uv run ruff check
+
+    - name: Type check
+      run: |
+        cd $GITHUB_WORKSPACE/setup-repo
+        uv run mypy scripts/ tasks.py tests/
+
+    - name: Run tests
+      run: |
+        cd $GITHUB_WORKSPACE/setup-repo
+        uv run pytest -v
 
   test-reset:
     strategy:
@@ -386,7 +488,7 @@ jobs:
     - name: Run initial setup
       run: |
         cd $SETUP_DIR
-        ./setup
+        ./scripts/setup
 
     - name: Run reset script
       run: |
@@ -394,7 +496,7 @@ jobs:
         cd $SETUP_DIR
 
         # Run reset (auto-confirm with yes)
-        echo "y" | ./reset
+        echo "y" | ./scripts/reset
 
     - name: Verify symlinks were recreated
       run: |
