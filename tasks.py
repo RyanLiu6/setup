@@ -73,7 +73,7 @@ def _run_component(ctx: Context, component: str) -> None:
     if not script.exists():
         print(f"Warning: {script} not found, skipping")
         return
-    ctx.run(str(script), env={"SETUP_DIR": str(REPO_DIR)}, pty=True)
+    ctx.run(str(script), env={"REPO_DIR": str(REPO_DIR)}, pty=True)
 
 
 def _teardown() -> None:

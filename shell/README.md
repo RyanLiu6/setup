@@ -6,11 +6,11 @@ Cross-platform ZSH shell configuration for macOS and Linux.
 
 ```
 ~/.zshrc                          # Loader file (tools add lines here)
-  └── sources ~/dev/setup/shell/.zshrc
+  └── sources ~/dev/home/shell/.zshrc
         └── sources .zsh/*.zsh    # Modular configs
 ```
 
-**Key benefit:** Tools can add lines to `~/.zshrc` without breaking your setup. Your customizations live in `~/dev/setup/shell/` and are always sourced.
+**Key benefit:** Tools can add lines to `~/.zshrc` without breaking your setup. Your customizations live in `~/dev/home/shell/` and are always sourced.
 
 ## Directory Structure
 
@@ -86,7 +86,7 @@ _shellperf_tag "tagname" "After the operation"
 Running `./setup` will:
 1. Symlink `.zprofile`:
    ```
-   ~/.zprofile → ~/dev/setup/shell/.zprofile
+   ~/.zprofile → ~/dev/home/shell/.zprofile
    ```
 2. Create/update `~/.zshrc` to source our config (preserving any existing tool additions)
 3. Prompt you to set ZSH as your default shell (if not already)
@@ -100,7 +100,7 @@ chsh -s $(which zsh)
 
 ### Customization
 
-Edit files directly in `~/dev/setup/shell/`:
+Edit files directly in `~/dev/home/shell/`:
 - Add aliases in `.zsh/aliases.zsh`
 - Add work configs in `.zsh/work.zsh`
 - Create new `.zsh/*.zsh` files (auto-sourced)

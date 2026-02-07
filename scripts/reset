@@ -3,9 +3,9 @@ set -e
 
 # Thin wrapper — confirmation prompt, then delegate to invoke.
 
-SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
-source "$SETUP_DIR/lib/platform.sh"
+source "$REPO_DIR/lib/platform.sh"
 
 echo "======================================"
 echo "Development Environment Reset"
@@ -29,4 +29,4 @@ fi
 
 echo ""
 
-uv run --directory "$SETUP_DIR" inv reset --yes
+uv run --directory "$REPO_DIR" inv reset --yes

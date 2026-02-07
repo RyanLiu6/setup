@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 
 # Source platform detection helpers
-source "$SETUP_DIR/lib/platform.sh"
+source "$REPO_DIR/lib/platform.sh"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Terminal Environment Setup"
@@ -145,7 +145,7 @@ install_ghostty
 # (like config-file = colours/eva01) resolve correctly
 setup_ghostty_config() {
     local ghostty_config_dir="$HOME/.config/ghostty"
-    local ghostty_src_dir="$SETUP_DIR/terminal/ghostty"
+    local ghostty_src_dir="$REPO_DIR/terminal/ghostty"
 
     if [ -d "$ghostty_src_dir" ]; then
         # Ensure parent .config directory exists
@@ -170,7 +170,7 @@ setup_ghostty_config
 # Setup Starship configuration
 setup_starship_config() {
     local starship_config="$HOME/.config/starship.toml"
-    local starship_src="$SETUP_DIR/terminal/starship.toml"
+    local starship_src="$REPO_DIR/terminal/starship.toml"
 
     if [ -f "$starship_src" ]; then
         mkdir -p "$HOME/.config"

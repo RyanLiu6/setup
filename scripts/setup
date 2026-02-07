@@ -3,9 +3,9 @@ set -e
 
 # Thin wrapper — platform bootstrap, then delegate to invoke.
 
-SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
-source "$SETUP_DIR/lib/platform.sh"
+source "$REPO_DIR/lib/platform.sh"
 
 # Platform bootstrap (Homebrew on macOS) — must happen before uv/invoke.
 OS=$(detect_os)
@@ -25,5 +25,5 @@ case "$OS" in
         ;;
 esac
 
-uv sync --quiet --directory "$SETUP_DIR"
-uv run --directory "$SETUP_DIR" inv setup
+uv sync --quiet --directory "$REPO_DIR"
+uv run --directory "$REPO_DIR" inv setup

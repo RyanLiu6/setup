@@ -10,5 +10,5 @@ alias systemctl="sudo systemctl"
 
 # Custom aliases
 alias reload="exec zsh"
-alias cdm="cd ~/dev/setup/"
+alias cdm="cd ~/dev/home/"
 alias dps='docker ps -a --format="table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"'

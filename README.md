@@ -16,12 +16,12 @@ This repository contains cross-platform configuration for macOS and Linux:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/setup.git ~/dev/setup
+   git clone https://github.com/yourusername/home.git ~/dev/home
    ```
 
 2. Run the setup script:
    ```bash
-   cd ~/dev/setup
+   cd ~/dev/home
    ./scripts/setup
    ```
 
@@ -37,7 +37,7 @@ This repository contains cross-platform configuration for macOS and Linux:
 If something is broken or you want a fresh start, run the reset script:
 
 ```bash
-cd ~/dev/setup
+cd ~/dev/home
 ./scripts/reset
 ```
 
@@ -50,11 +50,11 @@ The reset script takes a "nuclear" approach - it deletes and recreates everythin
 
 ## Custom Installation Path
 
-By default, the setup expects to be cloned to `~/dev/setup`. If you prefer a different location:
+Scripts auto-detect the repo path, but you can override it:
 
 ```bash
-export SETUP_DIR=/path/to/your/setup
-cd $SETUP_DIR
+export REPO_DIR=/path/to/your/home
+cd $REPO_DIR
 ./scripts/setup
 ```
 
@@ -69,7 +69,7 @@ cd $SETUP_DIR
 [Learn more](terminal/README.md)
 
 ### Shell Configuration
-- Modular ZSH configuration (edit `~/dev/setup/shell/` directly)
+- Modular ZSH configuration (edit `~/dev/home/shell/` directly)
 - `~/.zshrc` acts as loader—tools can add lines without breaking config
 - Lazy loading for better startup time
 - Total startup time tracking (including tool-added lines)

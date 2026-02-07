@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-SETUP_DIR="${SETUP_DIR:-$HOME/dev/setup}"
+REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 
 # Source platform detection helpers
-source "$SETUP_DIR/lib/platform.sh"
+source "$REPO_DIR/lib/platform.sh"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Lazygit Setup"
