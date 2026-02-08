@@ -155,24 +155,10 @@ install_ghostty
 # We symlink the entire ghostty directory so that relative paths in config
 # (like config-file = colours/eva01) resolve correctly
 setup_ghostty_config() {
-    local ghostty_config_dir="$HOME/.config/ghostty"
     local ghostty_src_dir="$REPO_DIR/terminal/ghostty"
-
     if [ -d "$ghostty_src_dir" ]; then
-        # Ensure parent .config directory exists
         mkdir -p "$HOME/.config"
-
-        if [ -L "$ghostty_config_dir" ]; then
-            echo "  ✓ Ghostty config directory already linked"
-        elif [ -d "$ghostty_config_dir" ]; then
-            echo "  → Backing up existing Ghostty config directory..."
-            mv "$ghostty_config_dir" "$ghostty_config_dir.backup"
-            ln -s "$ghostty_src_dir" "$ghostty_config_dir"
-            echo "  ✓ Ghostty config directory linked (backup saved)"
-        else
-            ln -s "$ghostty_src_dir" "$ghostty_config_dir"
-            echo "  ✓ Ghostty config directory linked"
-        fi
+        ensure_symlink "$ghostty_src_dir" "$HOME/.config/ghostty" "Ghostty config"
     fi
 }
 
@@ -180,23 +166,10 @@ setup_ghostty_config
 
 # Setup Starship configuration
 setup_starship_config() {
-    local starship_config="$HOME/.config/starship.toml"
     local starship_src="$REPO_DIR/terminal/starship.toml"
-
     if [ -f "$starship_src" ]; then
         mkdir -p "$HOME/.config"
-
-        if [ -L "$starship_config" ]; then
-            echo "  ✓ Starship config already linked"
-        elif [ -f "$starship_config" ]; then
-            echo "  → Backing up existing Starship config..."
-            mv "$starship_config" "$starship_config.backup"
-            ln -s "$starship_src" "$starship_config"
-            echo "  ✓ Starship config linked (backup saved)"
-        else
-            ln -s "$starship_src" "$starship_config"
-            echo "  ✓ Starship config linked"
-        fi
+        ensure_symlink "$starship_src" "$HOME/.config/starship.toml" "Starship config"
     fi
 }
 

@@ -254,6 +254,46 @@ def lint(ctx: Context, fix: bool = False) -> None:
 
 
 @task
+def cleanup(ctx: Context) -> None:
+    """Remove backup files left behind by setup scripts.
+
+    Setup scripts create .backup files when replacing existing configs with
+    symlinks. This task finds and removes those stale backups.
+
+    Args:
+        ctx: Invoke context for running shell commands.
+    """
+    home = Path.home()
+
+    backup_patterns = [
+        home / ".zprofile.backup",
+        home / ".gitignore_global.backup",
+        home / ".config" / "starship.toml.backup",
+        home / ".config" / "ghostty.backup",
+        home / ".config" / "direnv" / "direnvrc.backup",
+    ]
+
+    zshrc_backups = list(home.glob(".zshrc.backup.*"))
+
+    all_backups = backup_patterns + zshrc_backups
+    found = [p for p in all_backups if p.exists() or p.is_dir()]
+
+    if not found:
+        print("✓ No backup files found — nothing to clean up.")
+        return
+
+    for path in found:
+        if path.is_dir():
+            print(f"  → Removing {path}/")
+            shutil.rmtree(path)
+        else:
+            print(f"  → Removing {path}")
+            path.unlink()
+
+    print(f"  ✓ Removed {len(found)} backup file(s)")
+
+
+@task
 def typecheck(ctx: Context) -> None:
     """Run mypy type checker against scripts/, tasks.py, and tests/.
 
