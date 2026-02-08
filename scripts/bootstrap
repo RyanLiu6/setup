@@ -12,4 +12,9 @@ fi
 
 cd "$REPO_DIR"
 uv sync --quiet
-uv run inv setup
+
+echo ""
+echo "✓ Bootstrap complete! Dependencies are installed."
+echo ""
+echo "To set up your development environment, run:"
+echo "  uv run inv setup"

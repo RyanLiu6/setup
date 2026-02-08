@@ -30,8 +30,18 @@ if [[ ! -f ~/.zshrc ]]; then
     # No .zshrc exists, create from loader template with correct path
     sed "s|__REPO_DIR__|$REPO_DIR|g" "$REPO_DIR/shell/.zshrc.loader" > ~/.zshrc
     echo "  ✓ Created ~/.zshrc (sources $REPO_DIR/shell/.zshrc)"
-elif ! grep -qF "source $REPO_DIR/shell/.zshrc" ~/.zshrc; then
-    # .zshrc exists but doesn't source our config, prepend loader content
+elif grep -qF "source $REPO_DIR/shell/.zshrc" ~/.zshrc; then
+    echo "  ✓ ~/.zshrc already sources our config"
+elif grep -q "source .*/shell/\.zshrc" ~/.zshrc; then
+    # Stale source path from repo rename — update in place
+    old_path=$(grep -o "source .*/shell/\.zshrc" ~/.zshrc | head -1 | sed 's/^source //')
+    echo "  → Updating stale source path in ~/.zshrc..."
+    tmp_file=$(mktemp)
+    sed "s|source .*/shell/\.zshrc|source $REPO_DIR/shell/.zshrc|" ~/.zshrc > "$tmp_file"
+    mv "$tmp_file" ~/.zshrc
+    echo "  ✓ ~/.zshrc updated (was → $old_path)"
+else
+    # .zshrc exists but doesn't source our config at all, prepend loader content
     echo "  → Existing ~/.zshrc found, adding source line..."
     tmp_file=$(mktemp)
     sed "s|__REPO_DIR__|$REPO_DIR|g" "$REPO_DIR/shell/.zshrc.loader" > "$tmp_file"
@@ -40,8 +50,6 @@ elif ! grep -qF "source $REPO_DIR/shell/.zshrc" ~/.zshrc; then
     cat ~/.zshrc >> "$tmp_file"
     mv "$tmp_file" ~/.zshrc
     echo "  ✓ Updated ~/.zshrc to source our config (preserved existing content)"
-else
-    echo "  ✓ ~/.zshrc already sources our config"
 fi
 
 echo ""
