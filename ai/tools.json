@@ -47,6 +47,14 @@
       "symlinks": [],
       "skills_symlink": {"source": "skills", "target": "skills"}
     },
+    "ccstatusline": {
+      "name": "ccstatusline",
+      "config_dir": "~/.config/ccstatusline",
+      "tool_dir": "modules/ccstatusline",
+      "symlinks": [
+        {"source": "settings.json", "target": "settings.json"}
+      ]
+    },
     "vscode": {
       "name": "VS Code",
       "config_dir": "~/Library/Application Support/Code/User",
