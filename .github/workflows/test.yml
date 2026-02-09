@@ -604,3 +604,57 @@ jobs:
         fi
 
         echo "✓ Reset script works correctly"
+
+    - name: Test reset --keep preserves tool content
+      run: |
+        echo "Testing --keep flag preserves tool-installed content..."
+
+        # Inject known content after the marker in ~/.zshrc
+        echo "" >> ~/.zshrc
+        echo "# Added by test-ci" >> ~/.zshrc
+        echo 'export TEST_KEEP_FLAG="preserved"' >> ~/.zshrc
+
+        # Verify the content was injected
+        if grep -q "TEST_KEEP_FLAG" ~/.zshrc; then
+          echo "✓ Test content injected into ~/.zshrc"
+        else
+          echo "✗ Failed to inject test content"
+          exit 1
+        fi
+
+        # Run reset with --keep
+        cd $REPO_DIR
+        uv run --directory "$REPO_DIR" inv reset --yes --keep
+
+        # Verify the injected content persists
+        if grep -q "TEST_KEEP_FLAG" ~/.zshrc; then
+          echo "✓ Tool content preserved after reset --keep"
+        else
+          echo "✗ Tool content lost after reset --keep"
+          cat ~/.zshrc
+          exit 1
+        fi
+
+        # Verify all symlinks still valid
+        if [ -L ~/.zprofile ]; then
+          echo "✓ .zprofile symlink valid after --keep reset"
+        else
+          echo "✗ .zprofile symlink missing after --keep reset"
+          exit 1
+        fi
+
+        if [ -L ~/.config/direnv/direnvrc ]; then
+          echo "✓ direnvrc symlink valid after --keep reset"
+        else
+          echo "✗ direnvrc symlink missing after --keep reset"
+          exit 1
+        fi
+
+        if [ -L ~/.gitignore_global ]; then
+          echo "✓ .gitignore_global symlink valid after --keep reset"
+        else
+          echo "✗ .gitignore_global symlink missing after --keep reset"
+          exit 1
+        fi
+
+        echo "✓ Reset --keep works correctly"

@@ -7,6 +7,14 @@ REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 source "$REPO_DIR/lib/platform.sh"
 
+# Parse --keep flag
+KEEP_FLAG=""
+for arg in "$@"; do
+    if [ "$arg" = "--keep" ]; then
+        KEEP_FLAG="--keep"
+    fi
+done
+
 echo "======================================"
 echo "Development Environment Reset"
 echo "======================================"
@@ -19,6 +27,9 @@ echo "⚠️  This will:"
 echo "  - Remove all config symlinks and files"
 echo "  - Reset git global configuration"
 echo "  - Re-run full setup from scratch"
+if [ -n "$KEEP_FLAG" ]; then
+    echo "  - PRESERVE tool-installed lines in ~/.zshrc"
+fi
 echo ""
 read -p "Continue? [y/N] " -n 1 -r
 echo ""
@@ -29,4 +40,4 @@ fi
 
 echo ""
 
-uv run --directory "$REPO_DIR" inv reset --yes
+uv run --directory "$REPO_DIR" inv reset --yes $KEEP_FLAG

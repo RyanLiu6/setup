@@ -4,11 +4,14 @@ import shutil
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 from invoke.context import Context
 from invoke.tasks import task
 
 REPO_DIR = Path(__file__).parent
+
+ZSHRC_TOOL_MARKER = "# Tools install themselves below this line"
 
 COMPONENTS = ["terminal", "direnv", "git", "lazygit", "shell"]
 
@@ -45,6 +48,53 @@ def _load_ai_tool_paths() -> list[str]:
             paths.append(f"{rel_dir}/{tool['memory_generate']['target']}")
 
     return paths
+
+
+def _extract_zshrc_tool_content() -> Optional[str]:
+    """Extract tool-installed content from ~/.zshrc (everything from the marker onward).
+
+    Reads the current ~/.zshrc (if it exists and is a real file, not a symlink),
+    finds the ZSHRC_TOOL_MARKER line, and returns everything from that line onward.
+
+    Returns:
+        The marker line and all content below it, or None if the file is missing,
+        is a symlink, has no marker, or has only whitespace after the marker.
+    """
+    zshrc = Path.home() / ".zshrc"
+    if not zshrc.is_file() or zshrc.is_symlink():
+        return None
+
+    content = zshrc.read_text()
+    marker_idx = content.find(ZSHRC_TOOL_MARKER)
+    if marker_idx == -1:
+        return None
+
+    preserved = content[marker_idx:]
+    after_marker = preserved[len(ZSHRC_TOOL_MARKER) :]
+    if not after_marker.strip():
+        return None
+
+    return preserved
+
+
+def _restore_zshrc_tool_content(content: str) -> None:
+    """Replace the marker block in the freshly-created ~/.zshrc with preserved content.
+
+    Reads the new ~/.zshrc, finds the ZSHRC_TOOL_MARKER line, and replaces
+    everything from that line onward with the previously saved content.
+
+    Args:
+        content: The preserved block (marker line + tool-installed lines).
+    """
+    zshrc = Path.home() / ".zshrc"
+    current = zshrc.read_text()
+    marker_idx = current.find(ZSHRC_TOOL_MARKER)
+    if marker_idx == -1:
+        return
+
+    new_content = current[:marker_idx] + content
+    zshrc.write_text(new_content)
+    print("  ✓ Restored tool-installed content in ~/.zshrc")
 
 
 def _setup_platform(ctx: Context) -> None:
@@ -183,12 +233,13 @@ def setup(ctx: Context) -> None:
 
 
 @task
-def reset(ctx: Context, yes: bool = False) -> None:
+def reset(ctx: Context, yes: bool = False, keep: bool = False) -> None:
     """Remove all managed configs and symlinks, then re-run setup from scratch.
 
     Args:
         ctx: Invoke context for running shell commands.
         yes: Skip the interactive confirmation prompt.
+        keep: Preserve tool-installed lines in ~/.zshrc across the reset.
     """
     print("======================================")
     print("Development Environment Reset")
@@ -200,15 +251,28 @@ def reset(ctx: Context, yes: bool = False) -> None:
         print("  - Remove all config symlinks and files")
         print("  - Reset git global configuration")
         print("  - Re-run full setup from scratch")
+        if keep:
+            print("  - PRESERVE tool-installed lines in ~/.zshrc")
         print()
         reply = input("Continue? [y/N] ")
         if reply.lower() != "y":
             print("Aborted.")
             return
 
+    preserved_content = None
+    if keep:
+        preserved_content = _extract_zshrc_tool_content()
+        if preserved_content:
+            print("  → Extracted tool-installed content from ~/.zshrc")
+        else:
+            print("  → No tool-installed content found to preserve")
+
     print()
     _teardown()
     setup(ctx)
+
+    if preserved_content:
+        _restore_zshrc_tool_content(preserved_content)
 
 
 @task
