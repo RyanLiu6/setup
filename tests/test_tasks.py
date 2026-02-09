@@ -23,11 +23,11 @@ source /some/path/shell/.zshrc
 """
 
 TOOL_CONTENT = """\
-# Added by Instacart
-source ~/.instacart_shell_profile
+# Added by some-tool
+source ~/.some_tool_profile
 
-# bento completions
-eval "$(bento completions zsh)"
+# another-tool completions
+eval "$(another-tool completions zsh)"
 """
 
 ZSHRC_WITH_TOOLS = LOADER_TEMPLATE + TOOL_CONTENT
@@ -41,8 +41,8 @@ class TestExtractZshrcToolContent:
         result = _extract_zshrc_tool_content()
         assert result is not None
         assert result.startswith(ZSHRC_TOOL_MARKER)
-        assert "instacart_shell_profile" in result
-        assert "bento completions" in result
+        assert "some_tool_profile" in result
+        assert "another-tool completions" in result
 
     def test_extract_zshrc_tool_content_no_marker(self, fake_home: Path) -> None:
         zshrc = fake_home / ".zshrc"
@@ -77,8 +77,8 @@ class TestRestoreZshrcToolContent:
         _restore_zshrc_tool_content(preserved)
 
         result = zshrc.read_text()
-        assert "instacart_shell_profile" in result
-        assert "bento completions" in result
+        assert "some_tool_profile" in result
+        assert "another-tool completions" in result
         assert result.startswith("# ~/.zshrc loader")
         assert result.count(ZSHRC_TOOL_MARKER) == 1
 
