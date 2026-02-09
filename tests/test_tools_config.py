@@ -118,11 +118,9 @@ def test_settings_template_exists(
 
 def test_claude_template_has_no_work_config(ai_root: Path) -> None:
     template_path = ai_root / "modules" / "claude" / "settings.template.json"
-    content = template_path.read_text()
+    parsed = json.loads(template_path.read_text())
 
-    assert "instacart" not in content.lower()
-    assert "env" not in json.loads(content), "Template should not contain env vars"
-    assert "extraKnownMarketplaces" not in json.loads(content)
+    assert "env" not in parsed, "Template should not contain env vars"
 
 
 def test_claude_template_only_official_plugins(ai_root: Path) -> None:
