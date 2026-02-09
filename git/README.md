@@ -15,7 +15,7 @@ This setup separates git configuration into two layers:
 Your local `~/.gitconfig` includes the shared config using:
 ```ini
 [include]
-    path = ~/dev/home/git/.gitconfig.shared
+    path = ~/dev/dotfiles/git/.gitconfig.shared
 ```
 
 ## Features
@@ -61,11 +61,11 @@ Running `./setup` will:
 1. Verify Git is installed
 2. Symlink the global gitignore:
    ```
-   ~/.gitignore_global → ~/dev/home/git/.gitignore_global
+   ~/.gitignore_global → ~/dev/dotfiles/git/.gitignore_global
    ```
 3. Configure Git to include the shared configuration:
    ```
-   git config --global include.path "~/dev/home/git/.gitconfig.shared"
+   git config --global include.path "~/dev/dotfiles/git/.gitconfig.shared"
    ```
 
 Changes to `.gitignore_global` or `.gitconfig.shared` in this repo are immediately reflected across all Git operations.
@@ -82,7 +82,7 @@ When verifying git configuration, note the difference between `git config --glob
 **For testing/verification:**
 ```bash
 # Check include.path is set in global config
-git config --global include.path  # Returns: ~/dev/home/git/.gitconfig.shared
+git config --global include.path  # Returns: ~/dev/dotfiles/git/.gitconfig.shared
 
 # Check settings from shared config (must omit --global to read included files)
 git config push.autosetupremote   # Returns: true (from .gitconfig.shared)

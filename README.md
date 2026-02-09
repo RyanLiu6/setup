@@ -16,12 +16,12 @@ This repository contains cross-platform configuration for macOS and Linux:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/home.git ~/dev/home
+   git clone https://github.com/yourusername/dotfiles.git ~/dev/dotfiles
    ```
 
 2. Run the setup script:
    ```bash
-   cd ~/dev/home
+   cd ~/dev/dotfiles
    ./scripts/setup
    ```
 
@@ -37,7 +37,7 @@ This repository contains cross-platform configuration for macOS and Linux:
 If something is broken or you want a fresh start, run the reset script:
 
 ```bash
-cd ~/dev/home
+cd ~/dev/dotfiles
 ./scripts/reset
 ```
 
@@ -53,7 +53,7 @@ The reset script takes a "nuclear" approach - it deletes and recreates everythin
 Scripts auto-detect the repo path, but you can override it:
 
 ```bash
-export REPO_DIR=/path/to/your/home
+export REPO_DIR=/path/to/your/dotfiles
 cd $REPO_DIR
 ./scripts/setup
 ```
@@ -69,7 +69,7 @@ cd $REPO_DIR
 [Learn more](terminal/README.md)
 
 ### Shell Configuration
-- Modular ZSH configuration (edit `~/dev/home/shell/` directly)
+- Modular ZSH configuration (edit `~/dev/dotfiles/shell/` directly)
 - `~/.zshrc` acts as loader—tools can add lines without breaking config
 - Lazy loading for better startup time
 - Total startup time tracking (including tool-added lines)

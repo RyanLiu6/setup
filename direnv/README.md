@@ -15,7 +15,7 @@ Running `./setup` will:
 2. Create the direnv config directory (`~/.config/direnv`)
 3. Symlink the direnv configuration:
    ```
-   ~/.config/direnv/direnvrc → ~/dev/home/direnv/direnvrc
+   ~/.config/direnv/direnvrc → ~/dev/dotfiles/direnv/direnvrc
    ```
 
 Changes to `direnvrc` in this repo are immediately reflected.
@@ -31,7 +31,7 @@ Changes to `direnvrc` in this repo are immediately reflected.
 
 2. Copy the example template:
    ```bash
-   cp ~/dev/home/direnv/.envrc.uv.example .envrc
+   cp ~/dev/dotfiles/direnv/.envrc.uv.example .envrc
    ```
 
 3. Allow direnv to activate:

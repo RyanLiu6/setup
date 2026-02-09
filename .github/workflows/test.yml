@@ -19,10 +19,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        path: home-repo
+        path: dotfiles-repo
 
     - name: Set REPO_DIR environment variable
-      run: echo "REPO_DIR=$GITHUB_WORKSPACE/home-repo" >> $GITHUB_ENV
+      run: echo "REPO_DIR=$GITHUB_WORKSPACE/dotfiles-repo" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
@@ -423,7 +423,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        path: home-repo
+        path: dotfiles-repo
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
@@ -437,27 +437,27 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd $GITHUB_WORKSPACE/home-repo
+        cd $GITHUB_WORKSPACE/dotfiles-repo
         uv sync --group dev
 
     - name: Check formatting
       run: |
-        cd $GITHUB_WORKSPACE/home-repo
+        cd $GITHUB_WORKSPACE/dotfiles-repo
         uv run ruff format --check
 
     - name: Lint
       run: |
-        cd $GITHUB_WORKSPACE/home-repo
+        cd $GITHUB_WORKSPACE/dotfiles-repo
         uv run ruff check
 
     - name: Type check
       run: |
-        cd $GITHUB_WORKSPACE/home-repo
+        cd $GITHUB_WORKSPACE/dotfiles-repo
         uv run mypy scripts/ tasks.py tests/
 
     - name: Run tests
       run: |
-        cd $GITHUB_WORKSPACE/home-repo
+        cd $GITHUB_WORKSPACE/dotfiles-repo
         uv run pytest -v
 
   test-reset:
@@ -471,10 +471,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        path: home-repo
+        path: dotfiles-repo
 
     - name: Set REPO_DIR environment variable
-      run: echo "REPO_DIR=$GITHUB_WORKSPACE/home-repo" >> $GITHUB_ENV
+      run: echo "REPO_DIR=$GITHUB_WORKSPACE/dotfiles-repo" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
