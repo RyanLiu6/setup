@@ -1,5 +1,5 @@
 [project]
-name = "home"
+name = "dotfiles"
 version = "0.1.0"
 description = "Development environment and AI CLI tools configuration"
 requires-python = ">=3.12"

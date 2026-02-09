@@ -2,7 +2,7 @@
 # This file contains universal git settings that should be consistent across all machines.
 # Include this in your ~/.gitconfig with:
 #   [include]
-#       path = ~/dev/home/git/.gitconfig.shared
+#       path = ~/dev/dotfiles/git/.gitconfig.shared
 
 [core]
     whitespace = trailing-space,space-before-tab
