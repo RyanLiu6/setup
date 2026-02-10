@@ -1,11 +1,14 @@
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
+from invoke.context import Context
 
 from tasks import (
     ZSHRC_TOOL_MARKER,
     _extract_zshrc_tool_content,
     _restore_zshrc_tool_content,
+    cleanup,
 )
 
 
@@ -91,3 +94,85 @@ class TestRestoreZshrcToolContent:
 
         result = zshrc.read_text()
         assert result == "# no marker here\n"
+
+
+class TestCleanup:
+    @pytest.fixture
+    def fake_home(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+        monkeypatch.setattr(Path, "home", lambda: tmp_path)
+        monkeypatch.setenv("HOME", str(tmp_path))
+        return tmp_path
+
+    def test_cleanup(self, fake_home: Path) -> None:
+        backup_files: list[Path] = []
+        backup_dirs: list[Path] = []
+
+        for rel in [
+            ".zprofile.backup",
+            ".gitignore_global.backup",
+            ".config/starship.toml.backup",
+            ".config/direnv/direnvrc.backup",
+        ]:
+            p = fake_home / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("backup")
+            backup_files.append(p)
+
+        ghostty_backup = fake_home / ".config" / "ghostty.backup"
+        ghostty_backup.mkdir(parents=True)
+        (ghostty_backup / "config").write_text("backup")
+        backup_dirs.append(ghostty_backup)
+
+        for ts in ["20240101_120000", "20240615_090000"]:
+            p = fake_home / f".zshrc.backup.{ts}"
+            p.write_text("backup")
+            backup_files.append(p)
+
+        claude_dir = fake_home / ".claude"
+        claude_dir.mkdir(parents=True, exist_ok=True)
+        for name in [
+            "CLAUDE.md.backup.20240101_120000",
+            "settings.json.backup.20240101_120000",
+        ]:
+            p = claude_dir / name
+            p.write_text("backup")
+            backup_files.append(p)
+
+        skills_backup = claude_dir / "skills.backup.20240101_120000"
+        skills_backup.mkdir()
+        (skills_backup / "some-skill").mkdir()
+        backup_dirs.append(skills_backup)
+
+        gemini_dir = fake_home / ".gemini"
+        gemini_dir.mkdir(parents=True, exist_ok=True)
+        p = gemini_dir / "GEMINI.md.backup.20240101_120000"
+        p.write_text("backup")
+        backup_files.append(p)
+
+        commands_backup = gemini_dir / "commands.backup.20240101_120000"
+        commands_backup.mkdir()
+        backup_dirs.append(commands_backup)
+
+        preserved = []
+        for rel in [".zprofile", ".zshrc"]:
+            p = fake_home / rel
+            p.write_text("real config")
+            preserved.append(p)
+        for name, parent in [("CLAUDE.md", claude_dir), ("GEMINI.md", gemini_dir)]:
+            p = parent / name
+            p.write_text("real config")
+            preserved.append(p)
+
+        all_backups = backup_files + backup_dirs
+        for p in all_backups:
+            assert p.exists()
+
+        cleanup(MagicMock(spec=Context))
+
+        for p in all_backups:
+            assert not p.exists(), f"Cleanup missed: {p}"
+        for p in preserved:
+            assert p.exists(), f"Cleanup wrongly removed: {p}"
+
+    def test_cleanup_no_backups(self, fake_home: Path) -> None:
+        cleanup(MagicMock(spec=Context))

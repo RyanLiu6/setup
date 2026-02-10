@@ -1,4 +1,5 @@
 import json
+import os
 import platform
 import shutil
 import subprocess
@@ -317,19 +318,50 @@ def lint(ctx: Context, fix: bool = False) -> None:
     ctx.run(cmd, pty=True)
 
 
+def _find_ai_backup_files() -> list[Path]:
+    """Find timestamped backup files in AI tool config directories.
+
+    Reads tools.json to discover config directories, then searches each for
+    backup files created by scripts/setup.py's backup_if_exists() function.
+    These follow the pattern: {name}.backup.{YYYYMMDD_HHMMSS}
+
+    Returns:
+        List of paths to backup files/directories found in AI config dirs.
+    """
+    config_path = REPO_DIR / "ai" / "tools.json"
+    with open(config_path) as f:
+        config = json.load(f)
+
+    backups: list[Path] = []
+    for tool in config.get("tools", {}).values():
+        config_dir = Path(os.path.expanduser(tool["config_dir"]))
+        if not config_dir.exists():
+            continue
+
+        backups.extend(config_dir.glob("*.backup.*"))
+
+        for child in config_dir.iterdir():
+            if child.is_dir() and not child.is_symlink():
+                backups.extend(child.glob("*.backup.*"))
+
+    return backups
+
+
 @task
 def cleanup(ctx: Context) -> None:
     """Remove backup files left behind by setup scripts.
 
     Setup scripts create .backup files when replacing existing configs with
-    symlinks. This task finds and removes those stale backups.
+    symlinks. This task finds and removes those stale backups from three sources:
+    shell scripts (lib/platform.sh), the reset task (_teardown), and the AI
+    tools setup script (scripts/setup.py).
 
     Args:
         ctx: Invoke context for running shell commands.
     """
     home = Path.home()
 
-    backup_patterns = [
+    shell_backups = [
         home / ".zprofile.backup",
         home / ".gitignore_global.backup",
         home / ".config" / "starship.toml.backup",
@@ -339,7 +371,9 @@ def cleanup(ctx: Context) -> None:
 
     zshrc_backups = list(home.glob(".zshrc.backup.*"))
 
-    all_backups = backup_patterns + zshrc_backups
+    ai_backups = _find_ai_backup_files()
+
+    all_backups = shell_backups + zshrc_backups + ai_backups
     found = [p for p in all_backups if p.exists() or p.is_dir()]
 
     if not found:
