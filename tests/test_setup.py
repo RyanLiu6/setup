@@ -1,8 +1,6 @@
 from pathlib import Path
 from textwrap import dedent
 
-import pytest
-
 from scripts.setup import (
     convert_md_to_toml,
     ensure_settings_from_template,
@@ -185,11 +183,8 @@ def test_ensure_settings_from_template_missing_template(tmp_path: Path) -> None:
     assert not (tmp_path / "settings.json").exists()
 
 
-def test_ensure_settings_from_template_creates_from_template(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_ensure_settings_from_template_creates_from_template(tmp_path: Path) -> None:
     (tmp_path / "settings.template.json").write_text('{"from": "template"}')
-    monkeypatch.setattr("builtins.input", lambda _: "y")
 
     result = ensure_settings_from_template(
         tmp_path, {"template": "settings.template.json", "target": "settings.json"}
