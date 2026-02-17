@@ -115,7 +115,6 @@ class TestCleanup:
             ".gitignore_global.backup",
             ".config/starship.toml.backup",
             ".config/direnv/direnvrc.backup",
-            "Library/Preferences/com.knollsoft.Rectangle.plist.backup",
         ]:
             p = fake_home / rel
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -301,7 +300,6 @@ class TestTeardown:
             "direnvrc": fake_home / ".config" / "direnv" / "direnvrc",
             "gitignore": fake_home / ".gitignore_global",
             "starship": fake_home / ".config" / "starship.toml",
-            "rectangle": fake_home / "Library" / "Preferences" / "com.knollsoft.Rectangle.plist",
         }
         for p in configs.values():
             p.parent.mkdir(parents=True, exist_ok=True)

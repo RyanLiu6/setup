@@ -14,7 +14,6 @@ SYMLINK_SOURCES = [
     ("git", "git/.gitconfig.shared", "file"),
     ("terminal", "terminal/ghostty", "dir"),
     ("terminal", "terminal/starship.toml", "file"),
-    ("rectangle", "rectangle/com.knollsoft.Rectangle.plist", "file"),
 ]
 
 
