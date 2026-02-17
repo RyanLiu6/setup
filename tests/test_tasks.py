@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -8,6 +9,7 @@ from tasks import (
     ZSHRC_TOOL_MARKER,
     _extract_zshrc_tool_content,
     _restore_zshrc_tool_content,
+    _setup_platform,
     cleanup,
 )
 
@@ -176,3 +178,93 @@ class TestCleanup:
 
     def test_cleanup_no_backups(self, fake_home: Path) -> None:
         cleanup(MagicMock(spec=Context))
+
+
+class TestSetupPlatform:
+    @pytest.fixture
+    def mock_ctx(self) -> MagicMock:
+        return MagicMock(spec=Context)
+
+    def test_setup_platform_macos_apple_silicon(
+        self, mock_ctx: MagicMock, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr("tasks.platform.system", lambda: "Darwin")
+        monkeypatch.setattr("tasks.shutil.which", lambda _cmd: None)
+        monkeypatch.setattr(
+            "tasks.Path.exists",
+            lambda self: str(self) == "/opt/homebrew/bin/brew",
+        )
+        original_path = os.environ.get("PATH", "")
+        monkeypatch.setenv("PATH", original_path)
+
+        _setup_platform(mock_ctx)
+
+        mock_ctx.run.assert_called_once()
+        _args, kwargs = mock_ctx.run.call_args
+        assert kwargs["env"] == {"NONINTERACTIVE": "1"}
+        assert "/opt/homebrew/bin" in os.environ["PATH"]
+        assert "/opt/homebrew/sbin" in os.environ["PATH"]
+
+    def test_setup_platform_macos_intel(
+        self, mock_ctx: MagicMock, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr("tasks.platform.system", lambda: "Darwin")
+        monkeypatch.setattr("tasks.shutil.which", lambda _cmd: None)
+        monkeypatch.setattr(
+            "tasks.Path.exists",
+            lambda self: str(self) == "/usr/local/bin/brew",
+        )
+        original_path = os.environ.get("PATH", "")
+        monkeypatch.setenv("PATH", original_path)
+
+        _setup_platform(mock_ctx)
+
+        assert "/usr/local/bin" in os.environ["PATH"]
+        assert "/usr/local/sbin" in os.environ["PATH"]
+
+    def test_setup_platform_macos_brew_already_installed(
+        self, mock_ctx: MagicMock, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr("tasks.platform.system", lambda: "Darwin")
+        monkeypatch.setattr("tasks.shutil.which", lambda _cmd: "/opt/homebrew/bin/brew")
+
+        _setup_platform(mock_ctx)
+
+        mock_ctx.run.assert_not_called()
+
+    def test_setup_platform_macos_brew_not_found_after_install(
+        self, mock_ctx: MagicMock, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr("tasks.platform.system", lambda: "Darwin")
+        monkeypatch.setattr("tasks.shutil.which", lambda _cmd: None)
+        monkeypatch.setattr("tasks.Path.exists", lambda self: False)
+
+        with pytest.raises(SystemExit):
+            _setup_platform(mock_ctx)
+
+    def test_setup_platform_linux(
+        self, mock_ctx: MagicMock, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr("tasks.platform.system", lambda: "Linux")
+        monkeypatch.setattr("tasks.shutil.which", lambda _cmd: "/usr/bin/sudo")
+
+        _setup_platform(mock_ctx)
+
+        mock_ctx.run.assert_not_called()
+
+    def test_setup_platform_linux_no_sudo(
+        self, mock_ctx: MagicMock, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr("tasks.platform.system", lambda: "Linux")
+        monkeypatch.setattr("tasks.shutil.which", lambda _cmd: None)
+
+        with pytest.raises(SystemExit):
+            _setup_platform(mock_ctx)
+
+    def test_setup_platform_unsupported_os(
+        self, mock_ctx: MagicMock, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr("tasks.platform.system", lambda: "FreeBSD")
+
+        with pytest.raises(SystemExit):
+            _setup_platform(mock_ctx)

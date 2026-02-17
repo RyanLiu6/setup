@@ -106,7 +106,18 @@ def _setup_platform(ctx: Context) -> None:
             print("📦 Installing Homebrew...")
             ctx.run(
                 '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
+                env={"NONINTERACTIVE": "1"},
                 pty=True,
+            )
+            # Add brew to PATH so child processes (component setup scripts) can find it
+            if Path("/opt/homebrew/bin/brew").exists():
+                brew_prefix = "/opt/homebrew"
+            elif Path("/usr/local/bin/brew").exists():
+                brew_prefix = "/usr/local"
+            else:
+                raise SystemExit("⚠️  Homebrew installed but binary not found")
+            os.environ["PATH"] = (
+                f"{brew_prefix}/bin:{brew_prefix}/sbin:{os.environ.get('PATH', '')}"
             )
         else:
             print("✓ Homebrew already installed")

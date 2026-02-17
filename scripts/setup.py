@@ -371,11 +371,10 @@ def generate_memory(source_dir: Path, config_dir: Path, target: str, mode: str) 
 
 
 def ensure_settings_from_template(tool_dir: Path, template_cfg: SettingsTemplate) -> bool:
-    """Prompt the user to create a settings file from a template if it doesn't exist.
+    """Create a settings file from a template if it doesn't exist.
 
     If the target settings file already exists in the tool directory, this is a
-    no-op.  Otherwise the user is asked whether to copy the template; answering
-    'n' exits the process since the settings file is required.
+    no-op. Otherwise the template is automatically copied to the target path.
 
     Args:
         tool_dir: The tool's source directory (e.g. repo/ai/modules/claude).
@@ -397,24 +396,6 @@ def ensure_settings_from_template(tool_dir: Path, template_cfg: SettingsTemplate
             Colors.RED,
         )
         return False
-
-    if os.environ.get("CI"):
-        print_colored(
-            f"  CI detected — auto-creating {target_path.name} from template",
-            Colors.YELLOW,
-        )
-    else:
-        print_colored(
-            f"  No {target_path.name} found — a template is available at {template_path.name}",
-            Colors.YELLOW,
-        )
-        reply = input(f"  Create {target_path.name} from template? [y/N] ").strip().lower()
-        if reply != "y":
-            print_colored(
-                f"  {target_path.name} is required — please create it manually and re-run setup.",
-                Colors.RED,
-            )
-            sys.exit(1)
 
     shutil.copy2(template_path, target_path)
     print_colored(f"  Created {target_path.name} from {template_path.name}", Colors.GREEN)
