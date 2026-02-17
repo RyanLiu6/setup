@@ -10,6 +10,7 @@ from tasks import (
     _extract_zshrc_tool_content,
     _restore_zshrc_tool_content,
     _setup_platform,
+    _teardown,
     cleanup,
 )
 
@@ -114,6 +115,7 @@ class TestCleanup:
             ".gitignore_global.backup",
             ".config/starship.toml.backup",
             ".config/direnv/direnvrc.backup",
+            "Library/Preferences/com.knollsoft.Rectangle.plist.backup",
         ]:
             p = fake_home / rel
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -268,3 +270,111 @@ class TestSetupPlatform:
 
         with pytest.raises(SystemExit):
             _setup_platform(mock_ctx)
+
+
+class TestTeardown:
+    @pytest.fixture
+    def fake_home(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+        monkeypatch.setattr(Path, "home", lambda: tmp_path)
+        monkeypatch.setenv("HOME", str(tmp_path))
+        return tmp_path
+
+    def test_teardown(self, fake_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        mock_run = MagicMock()
+        monkeypatch.setattr("tasks.subprocess.run", mock_run)
+
+        ai_symlink = fake_home / ".claude" / "CLAUDE.md"
+        ai_dir = fake_home / ".gemini" / "commands"
+        ai_file = fake_home / ".claude" / "settings.json"
+        monkeypatch.setattr(
+            "tasks._load_ai_tool_paths",
+            lambda: [
+                ".claude/CLAUDE.md",
+                ".gemini/commands",
+                ".claude/settings.json",
+            ],
+        )
+
+        configs = {
+            ".zprofile": fake_home / ".zprofile",
+            ".zshrc": fake_home / ".zshrc",
+            "direnvrc": fake_home / ".config" / "direnv" / "direnvrc",
+            "gitignore": fake_home / ".gitignore_global",
+            "starship": fake_home / ".config" / "starship.toml",
+            "rectangle": fake_home / "Library" / "Preferences" / "com.knollsoft.Rectangle.plist",
+        }
+        for p in configs.values():
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("config")
+
+        ghostty = fake_home / ".config" / "ghostty"
+        ghostty.mkdir(parents=True)
+        (ghostty / "config").write_text("font-size = 14")
+
+        ai_symlink.parent.mkdir(parents=True, exist_ok=True)
+        real_target = fake_home / "real_claude_md"
+        real_target.write_text("real")
+        ai_symlink.symlink_to(real_target)
+
+        ai_dir.parent.mkdir(parents=True, exist_ok=True)
+        ai_dir.mkdir()
+        (ai_dir / "cmd").write_text("x")
+
+        ai_file.write_text("settings")
+
+        _teardown()
+
+        for name, p in configs.items():
+            assert not p.exists(), f"{name} should be removed"
+        assert not ghostty.exists(), "ghostty dir should be removed"
+
+        zshrc_backups = list(fake_home.glob(".zshrc.backup.*"))
+        assert len(zshrc_backups) == 1
+
+        assert not ai_symlink.exists() and not ai_symlink.is_symlink()
+        assert not ai_dir.exists()
+        assert not ai_file.exists()
+
+        git_unset_calls = [args[0][0] for args in mock_run.call_args_list]
+        assert any("core.excludesfile" in cmd for cmd in git_unset_calls)
+        assert any("include.path" in cmd for cmd in git_unset_calls)
+
+    def test_teardown_symlinks(self, fake_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        mock_run = MagicMock()
+        monkeypatch.setattr("tasks.subprocess.run", mock_run)
+        monkeypatch.setattr("tasks._load_ai_tool_paths", lambda: [])
+
+        real_file = fake_home / "real_zprofile"
+        real_file.write_text("real")
+
+        zprofile = fake_home / ".zprofile"
+        zprofile.symlink_to(real_file)
+
+        real_zshrc = fake_home / "real_zshrc"
+        real_zshrc.write_text("real")
+        zshrc = fake_home / ".zshrc"
+        zshrc.symlink_to(real_zshrc)
+
+        ghostty_real = fake_home / "real_ghostty"
+        ghostty_real.mkdir()
+        ghostty = fake_home / ".config" / "ghostty"
+        ghostty.parent.mkdir(parents=True, exist_ok=True)
+        ghostty.symlink_to(ghostty_real)
+
+        _teardown()
+
+        assert not zprofile.exists() and not zprofile.is_symlink()
+        assert not zshrc.exists() and not zshrc.is_symlink()
+        assert not ghostty.exists() and not ghostty.is_symlink()
+
+        zshrc_backups = list(fake_home.glob(".zshrc.backup.*"))
+        assert len(zshrc_backups) == 0
+
+    def test_teardown_nothing_exists(
+        self, fake_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        mock_run = MagicMock()
+        monkeypatch.setattr("tasks.subprocess.run", mock_run)
+        monkeypatch.setattr("tasks._load_ai_tool_paths", lambda: [])
+
+        _teardown()

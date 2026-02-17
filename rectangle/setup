@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
+
+# Source platform detection helpers
+source "$REPO_DIR/lib/platform.sh"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Rectangle Setup"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+OS=$(detect_os)
+
+if [[ "$OS" != "macos" ]]; then
+    echo "ℹ️  Rectangle is macOS only, skipping"
+    echo ""
+    exit 0
+fi
+
+# Install Rectangle
+if ! brew list --cask rectangle &> /dev/null; then
+    echo "📦 Installing Rectangle..."
+    brew install --cask rectangle
+    echo "✓ Rectangle installed successfully"
+else
+    echo "✓ Rectangle already installed"
+fi
+
+echo ""
+
+# Symlink Rectangle plist so UI changes persist to the repo
+echo "📝 Configuring Rectangle..."
+ensure_symlink "$REPO_DIR/rectangle/com.knollsoft.Rectangle.plist" "$HOME/Library/Preferences/com.knollsoft.Rectangle.plist" "Rectangle plist"
+
+echo ""
+echo "✓ Rectangle setup complete!"
+echo ""

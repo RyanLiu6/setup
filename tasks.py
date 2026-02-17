@@ -14,7 +14,7 @@ REPO_DIR = Path(__file__).parent
 
 ZSHRC_TOOL_MARKER = "# Tools install themselves below this line"
 
-COMPONENTS = ["terminal", "direnv", "git", "lazygit", "shell"]
+COMPONENTS = ["terminal", "direnv", "git", "lazygit", "rectangle", "shell"]
 
 
 def _load_ai_tool_paths() -> list[str]:
@@ -192,6 +192,11 @@ def _teardown() -> None:
     if starship.exists() or starship.is_symlink():
         print(f"  → Removing {starship}")
         starship.unlink()
+
+    rectangle_plist = home / "Library" / "Preferences" / "com.knollsoft.Rectangle.plist"
+    if rectangle_plist.exists() or rectangle_plist.is_symlink():
+        print(f"  → Removing {rectangle_plist}")
+        rectangle_plist.unlink()
 
     for rel_path in _load_ai_tool_paths():
         path = home / rel_path
@@ -378,6 +383,7 @@ def cleanup(ctx: Context) -> None:
         home / ".config" / "starship.toml.backup",
         home / ".config" / "ghostty.backup",
         home / ".config" / "direnv" / "direnvrc.backup",
+        home / "Library" / "Preferences" / "com.knollsoft.Rectangle.plist.backup",
     ]
 
     zshrc_backups = list(home.glob(".zshrc.backup.*"))
