@@ -1,0 +1,50 @@
+#!/bin/bash
+set -e
+
+REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
+
+# Source platform detection helpers
+source "$REPO_DIR/lib/platform.sh"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Rectangle Setup"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+OS=$(detect_os)
+
+if [[ "$OS" != "macos" ]]; then
+    echo "ℹ️  Rectangle is macOS only, skipping"
+    echo ""
+    exit 0
+fi
+
+# Install Rectangle
+if ! brew list --cask rectangle &> /dev/null; then
+    echo "📦 Installing Rectangle..."
+    brew install --cask rectangle
+    echo "✓ Rectangle installed successfully"
+else
+    echo "✓ Rectangle already installed"
+fi
+
+echo ""
+
+# Apply keyboard shortcuts from RectangleConfig.json via UserDefaults
+# Rectangle stores its config in macOS UserDefaults (com.knollsoft.Rectangle),
+# not by reading a JSON file. We parse our JSON and write each shortcut.
+echo "📝 Configuring Rectangle shortcuts..."
+
+CONFIG="$REPO_DIR/rectangle/RectangleConfig.json"
+DOMAIN="com.knollsoft.Rectangle"
+
+for key in $(python3 -c "import json; print(' '.join(json.load(open('$CONFIG')).keys()))"); do
+    key_code=$(python3 -c "import json; print(json.load(open('$CONFIG'))['$key']['keyCode'])")
+    mod_flags=$(python3 -c "import json; print(json.load(open('$CONFIG'))['$key']['modifierFlags'])")
+    defaults write "$DOMAIN" "$key" -dict keyCode -int "$key_code" modifierFlags -int "$mod_flags"
+    echo "  ✓ $key set"
+done
+
+echo ""
+echo "✓ Rectangle setup complete!"
+echo ""

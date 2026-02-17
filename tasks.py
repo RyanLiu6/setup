@@ -14,7 +14,7 @@ REPO_DIR = Path(__file__).parent
 
 ZSHRC_TOOL_MARKER = "# Tools install themselves below this line"
 
-COMPONENTS = ["terminal", "direnv", "git", "lazygit", "shell"]
+COMPONENTS = ["terminal", "direnv", "git", "lazygit", "rectangle", "shell"]
 
 
 def _load_ai_tool_paths() -> list[str]:

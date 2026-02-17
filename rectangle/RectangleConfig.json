@@ -1,0 +1,22 @@
+{
+  "leftHalf": {
+    "keyCode": 123,
+    "modifierFlags": 1310720
+  },
+  "rightHalf": {
+    "keyCode": 124,
+    "modifierFlags": 1310720
+  },
+  "maximize": {
+    "keyCode": 3,
+    "modifierFlags": 1310720
+  },
+  "center": {
+    "keyCode": 8,
+    "modifierFlags": 1310720
+  },
+  "restore": {
+    "keyCode": 15,
+    "modifierFlags": 1310720
+  }
+}
