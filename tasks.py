@@ -193,6 +193,11 @@ def _teardown() -> None:
         print(f"  → Removing {starship}")
         starship.unlink()
 
+    rectangle_plist = home / "Library" / "Preferences" / "com.knollsoft.Rectangle.plist"
+    if rectangle_plist.exists() or rectangle_plist.is_symlink():
+        print(f"  → Removing {rectangle_plist}")
+        rectangle_plist.unlink()
+
     for rel_path in _load_ai_tool_paths():
         path = home / rel_path
         if path.is_symlink():
@@ -378,6 +383,7 @@ def cleanup(ctx: Context) -> None:
         home / ".config" / "starship.toml.backup",
         home / ".config" / "ghostty.backup",
         home / ".config" / "direnv" / "direnvrc.backup",
+        home / "Library" / "Preferences" / "com.knollsoft.Rectangle.plist.backup",
     ]
 
     zshrc_backups = list(home.glob(".zshrc.backup.*"))
