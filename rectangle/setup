@@ -30,10 +30,10 @@ fi
 
 echo ""
 
-# Symlink Rectangle plist so UI changes persist to the repo
-echo "📝 Configuring Rectangle..."
-ensure_symlink "$REPO_DIR/rectangle/com.knollsoft.Rectangle.plist" "$HOME/Library/Preferences/com.knollsoft.Rectangle.plist" "Rectangle plist"
-
+echo "📝 To configure Rectangle:"
+echo "   1. Open Rectangle"
+echo "   2. Go to Settings → Import/Export"
+echo "   3. Import: $REPO_DIR/rectangle/RectangleConfig.json"
 echo ""
 echo "✓ Rectangle setup complete!"
 echo ""
