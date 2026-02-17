@@ -235,6 +235,16 @@ jobs:
           exit 1
         fi
 
+        # Check mole (macOS only)
+        if [ "$RUNNER_OS" = "macOS" ]; then
+          if command -v mole &> /dev/null; then
+            echo "✓ mole is available"
+          else
+            echo "✗ mole not found"
+            exit 1
+          fi
+        fi
+
     - name: Verify git configuration
       run: |
         echo "Checking git configuration..."

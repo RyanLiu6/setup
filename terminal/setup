@@ -110,6 +110,17 @@ if [[ "$OS" == "macos" ]]; then
     fi
 fi
 
+# Install Mole (macOS only, system cleaner/optimizer)
+if [[ "$OS" == "macos" ]]; then
+    if ! command -v mole &> /dev/null; then
+        echo "  → Installing mole..."
+        brew install mole
+        echo "  ✓ mole installed successfully"
+    else
+        echo "  ✓ mole already installed"
+    fi
+fi
+
 # Install Ghostty terminal emulator
 install_ghostty() {
     case "$OS" in
