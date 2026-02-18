@@ -30,10 +30,18 @@ fi
 
 echo ""
 
-echo "📝 To configure Rectangle:"
-echo "   1. Open Rectangle"
-echo "   2. Go to Settings → Import/Export"
-echo "   3. Import: $REPO_DIR/rectangle/RectangleConfig.json"
+PLIST_SRC="$REPO_DIR/rectangle/com.knollsoft.Rectangle.plist"
+PLIST_DST="$HOME/Library/Preferences/com.knollsoft.Rectangle.plist"
+
+if [[ -L "$PLIST_DST" ]]; then
+    rm "$PLIST_DST"
+    echo "✓ Removed stale plist symlink"
+fi
+
+defaults delete com.knollsoft.Rectangle &>/dev/null || true
+cp "$PLIST_SRC" "$PLIST_DST"
+echo "✓ Rectangle preferences installed"
+
 echo ""
 echo "✓ Rectangle setup complete!"
 echo ""
