@@ -7,6 +7,7 @@
       "symlinks": [
         {"source": "CLAUDE.md", "target": "CLAUDE.md"},
         {"source": "hooks", "target": "hooks"},
+        {"source": "statusline.sh", "target": "statusline.sh"},
         {"source": "settings.json", "target": "settings.json"}
       ],
       "settings_template": {"template": "settings.template.json", "target": "settings.json"},
@@ -46,14 +47,6 @@
       "tool_dir": "modules/antigravity",
       "symlinks": [],
       "skills_symlink": {"source": "skills", "target": "skills"}
-    },
-    "ccstatusline": {
-      "name": "ccstatusline",
-      "config_dir": "~/.config/ccstatusline",
-      "tool_dir": "modules/ccstatusline",
-      "symlinks": [
-        {"source": "settings.json", "target": "settings.json"}
-      ]
     },
     "vscode": {
       "name": "VS Code",
