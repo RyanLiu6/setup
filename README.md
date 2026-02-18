@@ -4,13 +4,13 @@ A modular development environment configuration focusing on Python, Node.js, and
 
 ## Overview
 
-This repository contains cross-platform configuration for macOS and Linux:
+Cross-platform configuration for macOS and Linux:
 
-- 🐚 Shell (ZSH) configuration with performance optimizations
-- 🐍 Python environment management (uv, venv, poetry)
-- 📦 Node.js version management (fnm + pnpm)
-- 🔧 Development tools (direnv, starship)
-- 🎨 Terminal customization (Ghostty, iTerm2)
+- Shell (ZSH) configuration with performance optimizations
+- Python environment management (uv, venv, poetry)
+- Node.js version management (fnm + pnpm)
+- Development tools (direnv, starship)
+- Terminal customization (Ghostty, iTerm2)
 
 ## Quick Start
 
@@ -34,19 +34,7 @@ This repository contains cross-platform configuration for macOS and Linux:
 
 ## Resetting a Broken Setup
 
-If something is broken or you want a fresh start, run the reset script:
-
-```bash
-cd ~/dev/dotfiles
-./scripts/reset
-```
-
-This will:
-1. Remove and recreate all config symlinks
-2. Reinstall any missing tools
-3. Reset shell configuration (backs up existing `.zshrc`)
-
-The reset script takes a "nuclear" approach - it deletes and recreates everything to ensure a clean state.
+If something is broken or you want a fresh start, run `./scripts/reset`. This removes and recreates all config symlinks, reinstalls missing tools, and resets shell configuration (backing up existing `.zshrc`).
 
 ## Custom Installation Path
 
@@ -59,72 +47,18 @@ cd $REPO_DIR
 ```
 
 ## Components
-### Terminal Setup
-- Fast python package management with uv
-- Node.js version management with fnm + pnpm
-- Custom prompt with starship
-- Ghostty terminal emulator with custom color scheme
-- iTerm2 color schemes and profiles (macOS)
 
-[Learn more](terminal/README.md)
-
-### Shell Configuration
-- Modular ZSH configuration (edit `~/dev/dotfiles/shell/` directly)
-- `~/.zshrc` acts as loader—tools can add lines without breaking config
-- Lazy loading for better startup time
-- Total startup time tracking (including tool-added lines)
-
-[Learn more](shell/README.md)
-
-### Python Development
-- Multiple python environment management options:
-  - uv (recommended)
-  - venv
-  - poetry
-- Automatic environment activation with direnv
-- Project scaffolding with `pyinit`
-
-[Learn more](direnv/README.md)
-
-### Git Configuration
-- Global gitignore settings
-- Common development files ignored
-
-[Learn more](git/README.md)
-
-## Features
-### Performance Optimizations
-- Lazy loading of heavy commands
-- Completion caching
-- Command evaluation caching
-- Shell startup profiling
-
-### Development Workflow
-- Automatic Python virtual environment activation
-- Node.js version switching per project
-- Custom terminal prompt with git status
-- Docker container status in prompt
+- **[Terminal](terminal/README.md)**: Ghostty/iTerm2 config, starship prompt, uv, fnm + pnpm
+- **[Shell](shell/README.md)**: Modular ZSH configuration with lazy loading and startup profiling
+- **[Python](direnv/README.md)**: Environment management (uv, venv, poetry) with direnv auto-activation and `pyinit` scaffolding
+- **[Git](git/README.md)**: Global gitignore, shared settings, machine-specific overrides
 
 ## Supported Platforms
 
-This setup is tested and fully supported on:
+- **macOS** (Intel and Apple Silicon) - requires Homebrew and Git
+- **Linux** (Debian/Ubuntu) - requires Git and sudo access
 
-- **macOS** (Intel and Apple Silicon)
-- **Linux** (Debian/Ubuntu)
-
-Other Linux distributions may work but are not officially supported.
-
-### Requirements
-
-**macOS:**
-- Homebrew (installed automatically if missing)
-- Git
-- Zsh (default on macOS)
-
-**Linux (Debian/Ubuntu):**
-- Git
-- Zsh (installed automatically if missing)
-- sudo access for package installation
+Zsh and Homebrew are installed automatically if missing.
 
 ## Customization
 
@@ -145,23 +79,4 @@ All configuration files are symlinked, so changes are immediately reflected with
 
 ## Testing
 
-This repository includes automated testing via GitHub Actions. The test workflow:
-
-- Runs on every push and pull request
-- Tests on both macOS and Ubuntu runners
-- Verifies all setup scripts run without errors
-- Validates that all configuration files are created
-- Confirms all tools are installed and accessible
-- Checks git configuration is correct
-- Tests setup idempotency (can be run multiple times)
-
-View test results in the "Actions" tab of your GitHub repository.
-
-## Troubleshooting
-
-### Shell Performance
-Use the built-in profiling tool to measure startup time:
-
-```bash
-shellperf
-```
+Automated tests run via GitHub Actions on every push and PR, verifying setup scripts, config files, tool installation, and idempotency on both macOS and Ubuntu.
