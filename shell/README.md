@@ -45,53 +45,11 @@ Cross-platform ZSH shell configuration for macOS and Linux.
 
 ### Shell Performance Profiling
 
-The `shellperf` command provides detailed timing analysis of shell startup:
-
-```bash
-shellperf
-```
-
-Output example:
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Shell Startup Performance Report
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-[base] 45ms
-  └─ Start base configuration: 2ms
-  └─ Loaded base configs: 30ms
-  └─ Loading Starship prompt: 8ms
-  └─ Loaded Starship prompt: 5ms
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Config load time: 45ms
-Total startup time: 52ms (captured at first prompt)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-The "Total startup time" includes everything in `~/.zshrc`, including any tool-added lines.
-
-**Adding custom timing tags:**
-
-In any `.zsh` file, use `_shellperf_tag` to mark timing points:
-
-```bash
-_shellperf_tag "tagname" "Description of what you're measuring"
-# ... code to measure ...
-_shellperf_tag "tagname" "After the operation"
-```
+The `shellperf` command provides detailed timing analysis of shell startup, showing per-section load times and total startup time (including any tool-added lines in `~/.zshrc`).
 
 ### Configuration
 
-Running `./setup` will:
-1. Symlink `.zprofile`:
-   ```
-   ~/.zprofile → ~/dev/dotfiles/shell/.zprofile
-   ```
-2. Create/update `~/.zshrc` to source our config (preserving any existing tool additions)
-3. Prompt you to set ZSH as your default shell (if not already)
-
-Changes to `.zprofile` in this repo are immediately reflected.
+Running `./setup` symlinks `.zprofile` to `~/.zprofile` and creates/updates `~/.zshrc` to source the dotfiles config (preserving any existing tool additions).
 
 To change your default shell to zsh:
 ```bash
