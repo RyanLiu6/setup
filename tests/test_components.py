@@ -16,6 +16,10 @@ SYMLINK_SOURCES = [
     ("terminal", "terminal/starship.toml", "file"),
 ]
 
+COPY_SOURCES = [
+    ("rectangle", "rectangle/com.knollsoft.Rectangle.plist", "file"),
+]
+
 
 @pytest.mark.parametrize("component", COMPONENTS)
 def test_setup_script_exists(component: str, repo_root: Path) -> None:
@@ -44,6 +48,22 @@ def test_setup_script_sources_platform_sh(component: str, repo_root: Path) -> No
     ids=[f"{c}:{p}" for c, p, _ in SYMLINK_SOURCES],
 )
 def test_symlink_sources_exist(
+    component: str, rel_path: str, expected_type: str, repo_root: Path
+) -> None:
+    path = repo_root / rel_path
+    assert path.exists(), f"{rel_path} does not exist"
+    if expected_type == "file":
+        assert path.is_file(), f"{rel_path} should be a file"
+    else:
+        assert path.is_dir(), f"{rel_path} should be a directory"
+
+
+@pytest.mark.parametrize(
+    "component, rel_path, expected_type",
+    COPY_SOURCES,
+    ids=[f"{c}:{p}" for c, p, _ in COPY_SOURCES],
+)
+def test_copy_sources_exist(
     component: str, rel_path: str, expected_type: str, repo_root: Path
 ) -> None:
     path = repo_root / rel_path
